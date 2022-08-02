@@ -10,54 +10,54 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
-public class HelloWorldBuilderTest {
+public class AutifyWebBuilderTest {
 
     @Rule
     public JenkinsRule jenkins = new JenkinsRule();
 
-    final String name = "Bobby";
+    final String autifyUrl = "https://app.autify.com/projects/743/scenarios/91437";
 
     @Test
     public void testConfigRoundtrip() throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject();
-        project.getBuildersList().add(new HelloWorldBuilder(name));
+        project.getBuildersList().add(new AutifyWebBuilder(autifyUrl));
         project = jenkins.configRoundtrip(project);
-        jenkins.assertEqualDataBoundBeans(new HelloWorldBuilder(name), project.getBuildersList().get(0));
+        jenkins.assertEqualDataBoundBeans(new AutifyWebBuilder(autifyUrl), project.getBuildersList().get(0));
     }
 
     @Test
-    public void testConfigRoundtripFrench() throws Exception {
+    public void testConfigRoundtripWait() throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject();
-        HelloWorldBuilder builder = new HelloWorldBuilder(name);
-        builder.setUseFrench(true);
+        AutifyWebBuilder builder = new AutifyWebBuilder(autifyUrl);
+        builder.setWait(true);
         project.getBuildersList().add(builder);
         project = jenkins.configRoundtrip(project);
 
-        HelloWorldBuilder lhs = new HelloWorldBuilder(name);
-        lhs.setUseFrench(true);
+        AutifyWebBuilder lhs = new AutifyWebBuilder(autifyUrl);
+        lhs.setWait(true);
         jenkins.assertEqualDataBoundBeans(lhs, project.getBuildersList().get(0));
     }
 
     @Test
     public void testBuild() throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject();
-        HelloWorldBuilder builder = new HelloWorldBuilder(name);
+        AutifyWebBuilder builder = new AutifyWebBuilder(autifyUrl);
         project.getBuildersList().add(builder);
 
         FreeStyleBuild build = jenkins.buildAndAssertSuccess(project);
-        jenkins.assertLogContains("Hello, " + name, build);
+        jenkins.assertLogContains(autifyUrl, build);
     }
 
     @Test
-    public void testBuildFrench() throws Exception {
-
+    public void testBuildWait() throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject();
-        HelloWorldBuilder builder = new HelloWorldBuilder(name);
-        builder.setUseFrench(true);
+        AutifyWebBuilder builder = new AutifyWebBuilder(autifyUrl);
+        builder.setWait(true);
         project.getBuildersList().add(builder);
 
         FreeStyleBuild build = jenkins.buildAndAssertSuccess(project);
-        jenkins.assertLogContains("Bonjour, " + name, build);
+        jenkins.assertLogContains(autifyUrl, build);
+        jenkins.assertLogContains("wait", build);
     }
 
     @Test
@@ -67,11 +67,11 @@ public class HelloWorldBuilderTest {
         WorkflowJob job = jenkins.createProject(WorkflowJob.class, "test-scripted-pipeline");
         String pipelineScript
                 = "node {\n"
-                + "  greet '" + name + "'\n"
+                + "  autifyWeb '" + autifyUrl + "'\n"
                 + "}";
         job.setDefinition(new CpsFlowDefinition(pipelineScript, true));
         WorkflowRun completedBuild = jenkins.assertBuildStatusSuccess(job.scheduleBuild2(0));
-        String expectedString = "Hello, " + name + "!";
+        String expectedString = autifyUrl;
         jenkins.assertLogContains(expectedString, completedBuild);
     }
 
