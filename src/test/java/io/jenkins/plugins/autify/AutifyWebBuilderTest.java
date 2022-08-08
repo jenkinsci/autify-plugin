@@ -10,6 +10,7 @@ import org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,6 +33,12 @@ public class AutifyWebBuilderTest {
     public void setup() {
         StringCredentials credentials = new StringCredentialsImpl(CredentialsScope.GLOBAL, credentialsId, "", Secret.fromString(accessToken));
         SystemCredentialsProvider.getInstance().getCredentials().add(credentials);
+        AutifyWebBuilder.setAutifyCliFactory(new AutifyCliWithProxy.Factory());
+    }
+
+    @After
+    public void tearDown() {
+        AutifyWebBuilder.resetAutifyCliFactory();
     }
 
     @Test

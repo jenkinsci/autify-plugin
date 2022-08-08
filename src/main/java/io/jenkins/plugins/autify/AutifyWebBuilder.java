@@ -25,6 +25,7 @@ import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 
 import javax.servlet.ServletException;
+
 import java.io.IOException;
 import java.util.Collections;
 
@@ -41,6 +42,14 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
     private final String credentialsId;
     private final String autifyUrl;
     private boolean wait;
+
+    private static AutifyCli.Factory autifyCliFactory = new AutifyCli.Factory();
+    public static void setAutifyCliFactory(AutifyCli.Factory factory) {
+        autifyCliFactory = factory;
+    }
+    public static void resetAutifyCliFactory() {
+        autifyCliFactory = new AutifyCli.Factory();
+    }
 
     @DataBoundConstructor
     public AutifyWebBuilder(String credentialsId, String autifyUrl) {
@@ -67,23 +76,24 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
 
     @Override
     public void perform(Run<?, ?> run, FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
-        StringCredentials credentials = CredentialsProvider.findCredentialById(
-            credentialsId,
-            StringCredentials.class,
-            run,
-            Collections.emptyList()
-        );
+        StringCredentials credentials = CredentialsProvider.findCredentialById(credentialsId, StringCredentials.class, run, Collections.emptyList());
         if (credentials == null) {
             listener.getLogger().println("Cannot find any credentials for "+ credentialsId);
             run.setResult(Result.FAILURE);
             return;
         }
-        String secretText = Secret.toString(credentials.getSecret());
-        listener.getLogger().println(secretText);
-        if (wait) {
-            listener.getLogger().println(autifyUrl + "wait");
-        } else {
-            listener.getLogger().println(autifyUrl);
+        String webAccessToken = Secret.toString(credentials.getSecret());
+        AutifyCli autifyCli = autifyCliFactory.get(workspace, launcher, listener);
+        if (autifyCli.install() != 0) {
+            listener.getLogger().println("Failed to install autify-cli");
+            run.setResult(Result.FAILURE);
+            return;
+        }
+        autifyCli.webAuthLogin(webAccessToken);
+        if (autifyCli.webTestRun(autifyUrl, wait) != 0) {
+            listener.getLogger().println("Failed to execute autify web test run");
+            run.setResult(Result.FAILURE);
+            return;
         }
     }
 
