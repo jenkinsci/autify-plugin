@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+. "$NVM_DIR/nvm.sh"
+nvm install --lts
+nvm use --lts
+node -v
+exec npx autify-with-proxy "$@"

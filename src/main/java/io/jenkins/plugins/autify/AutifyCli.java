@@ -13,9 +13,9 @@ import hudson.util.ArgumentListBuilder;
 
 public class AutifyCli {
 
-    private final FilePath workspace;
-    private final Launcher launcher;
-    private final PrintStream logger;
+    protected final FilePath workspace;
+    protected final Launcher launcher;
+    protected final PrintStream logger;
     protected String autifyPath = "./autify/bin/autify";
     private String webAccessToken = "";
     private String mobileAccessToken = "";
@@ -27,7 +27,7 @@ public class AutifyCli {
     }
 
     public int install() {
-        return runShellScript("install.sh");
+        return runShellScript("AutifyCli/install.sh");
     }
 
     public int webTestRun(String autifyUrl, boolean wait) {
@@ -79,14 +79,19 @@ public class AutifyCli {
         return envs;
     }
 
+    protected String getResourcePath(String name) {
+        URL url = getClass().getResource(name);
+        if (url == null) return null;
+        return url.getPath();
+    }
+
     protected int runShellScript(String scriptName) {
-        URL scriptUrl = getClass().getResource("AutifyCli/" + scriptName);
-        if (scriptUrl == null) {
+        String scriptPath = getResourcePath(scriptName);
+        if (scriptPath == null) {
             logger.println("Cannot find the script '" + scriptName + "'");
             return 1;
         }
-        String scriptFile = scriptUrl.getPath();
-        return runCommand("bash", "-xe", scriptFile);
+        return runCommand("bash", "-xe", scriptPath);
     }
 
     public static class Factory {
