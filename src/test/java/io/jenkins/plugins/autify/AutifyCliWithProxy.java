@@ -13,17 +13,19 @@ public class AutifyCliWithProxy extends AutifyCli {
     public AutifyCliWithProxy(FilePath workspace, Launcher launcher, TaskListener listener) {
         super(workspace, launcher, listener);
         this.originalAutifyPath = autifyPath;
-        this.autifyPath = "./node_modules/.bin/autify-with-proxy";
+        this.autifyPath = "./bin/autify-with-proxy";
     }
 
     public int install() {
-        runCommand("npm", "install", "@autifyhq/autify-cli-integration-test");
+        int ret = runShellScript("AutifyCliWithProxy/install-proxy.sh");
+        if (ret != 0) return ret;
         return super.install();
     }
 
     protected Map<String, String> getEnvs() {
         Map<String, String> envs = super.getEnvs();
         envs.put("AUTIFY_CLI_PATH", originalAutifyPath);
+        envs.put("NVM_DIR", "./nvm");
         return envs;
     }
 
