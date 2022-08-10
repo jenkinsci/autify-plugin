@@ -3,6 +3,8 @@ package io.jenkins.plugins.autify;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import hudson.FilePath;
 import hudson.Launcher;
@@ -14,7 +16,7 @@ public class AutifyCli {
     private final FilePath workspace;
     private final Launcher launcher;
     private final PrintStream logger;
-    protected String autifyPath = "./bin/autify";
+    protected String autifyPath = "./autify/bin/autify";
     private String webAccessToken = "";
     private String mobileAccessToken = "";
 
@@ -57,12 +59,7 @@ public class AutifyCli {
         try {
             return launcher.launch()
                 .pwd(workspace)
-                .envs(
-                    "PATH+WORKSPACE=" + workspace + "/bin",
-                    "AUTIFY_WEB_ACCESS_TOKEN=" + webAccessToken,
-                    "AUTIFY_MOBILE_ACCESS_TOKEN=" + mobileAccessToken,
-                    "XDG_DATA_HOME=" + workspace + "/.config"
-                )
+                .envs(getEnvs())
                 .stdout(logger)
                 .stderr(logger)
                 .cmds(command)
@@ -72,6 +69,14 @@ public class AutifyCli {
             e.printStackTrace(logger);
             return 1;
         }
+    }
+
+    protected Map<String, String> getEnvs() {
+        Map<String, String> envs = new HashMap<String, String>();
+        envs.put("AUTIFY_WEB_ACCESS_TOKEN", webAccessToken);
+        envs.put("AUTIFY_MOBILE_ACCESS_TOKEN", mobileAccessToken);
+        envs.put("XDG_DATA_HOME", workspace + "/.config");
+        return envs;
     }
 
     protected int runShellScript(String scriptName) {
