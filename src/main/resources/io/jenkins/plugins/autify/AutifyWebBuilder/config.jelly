@@ -3,12 +3,36 @@
     <f:entry title="${%Credentials}" field="credentialsId">
         <c:select/>
     </f:entry>
-    <f:entry title="${%AutifyUrl}" field="autifyUrl">
-        <f:textbox />
+    <f:entry title="${%AutifyUrl}" field="autifyUrl" description="${%AutifyUrlDescription}">
+        <f:textbox placeholder="https://app.autify.com/projects/&lt;ID&gt;/(scenarios|test_plans)/&lt;ID&gt;" />
     </f:entry>
     <f:entry title="${%Wait}" field="wait" description="${%WaitDescription}">
         <f:checkbox />
     </f:entry>
     <f:advanced>
+        <f:entry title="${%Timeout}" field="timeout" description="${%TimeoutDescription}">
+            <f:number placeholder="300" clazz="positive-number" min="1"/>
+        </f:entry>
+        <f:entry title="${%UrlReplacements}" field="urlReplacements" description="${%UrlReplacementsDescription}">
+            <f:repeatableProperty field="urlReplacements" />
+        </f:entry>
+        <f:entry title="${%TestExecutionName}" field="testExecutionName">
+            <f:textbox placeholder="Execute from Jenkins"/>
+        </f:entry>
+        <f:entry title="${%Browser}" field="browser">
+            <f:textbox placeholder="Chrome / Firefox / Safari / Edge"/>
+        </f:entry>
+        <f:entry title="${%Device}" field="device">
+            <f:textbox placeholder="iPhone X / Galaxy S20 / ..."/>
+        </f:entry>
+        <f:entry title="${%DeviceType}" field="deviceType">
+            <f:textbox placeholder="emulator / mobile"/>
+        </f:entry>
+        <f:entry title="${%Os}" field="os">
+            <f:textbox placeholder="Linux / Windows Server / Windows / OS X / Android / iOS"/>
+        </f:entry>
+        <f:entry title="${%OsVersion}" field="osVersion">
+            <f:textbox placeholder="11.0 (Android) / 15 (iOS) / ..."/>
+        </f:entry>
     </f:advanced>
 </j:jelly>

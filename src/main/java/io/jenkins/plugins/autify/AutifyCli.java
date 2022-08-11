@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import hudson.FilePath;
@@ -12,6 +13,8 @@ import hudson.Launcher;
 import hudson.Launcher.ProcStarter;
 import hudson.model.TaskListener;
 import hudson.util.ArgumentListBuilder;
+import io.jenkins.cli.shaded.org.apache.commons.lang.StringUtils;
+import io.jenkins.plugins.autify.model.UrlReplacement;
 
 public class AutifyCli {
 
@@ -32,10 +35,22 @@ public class AutifyCli {
         return runShellScript("https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/stable/install-cicd.bash");
     }
 
-    public int webTestRun(String autifyUrl, boolean wait) {
-        ArgumentListBuilder builder = autifyBuilder("web", "test", "run");
+    public int webTestRun(String autifyUrl, boolean wait, String timeout, List<UrlReplacement> urlReplacements, String testExecutionName, String browser, String device, String deviceType, String os, String osVersion) {
+        Builder builder = new Builder("web", "test", "run");
         builder.add(autifyUrl);
-        if (wait) builder.add("--wait");
+        builder.addFlag("--wait", wait);
+        builder.addFlag("--timeout", timeout);
+        if (urlReplacements != null) {
+            for (UrlReplacement urlReplacement : urlReplacements) {
+                builder.addFlag("--url-replacements", urlReplacement.toCliString());
+            }
+        }
+        builder.addFlag("--name", testExecutionName);
+        builder.addFlag("--browser", browser);
+        builder.addFlag("--device", device);
+        builder.addFlag("--device-type", deviceType);
+        builder.addFlag("--os", os);
+        builder.addFlag("--os-version", osVersion);
         return runCommand(builder);
     }
 
@@ -45,12 +60,6 @@ public class AutifyCli {
 
     public void mobileAuthLogin(String mobileAccessToken) {
         this.mobileAccessToken = mobileAccessToken;
-    }
-
-    private ArgumentListBuilder autifyBuilder(String... arguments) {
-        ArgumentListBuilder builder = new ArgumentListBuilder(autifyPath);
-        builder.add(arguments);
-        return builder;
     }
 
     protected int runCommand(ArgumentListBuilder builder) {
@@ -99,6 +108,26 @@ public class AutifyCli {
             e.printStackTrace(logger);
             return 1;
         }
+    }
+
+    private class Builder extends ArgumentListBuilder {
+
+        public Builder(String... arguments) {
+            super(autifyPath);
+            this.add(arguments);
+        }
+
+        public Builder addFlag(String flag, String value) {
+            value = StringUtils.trimToNull(value);
+            if (value != null) add(flag, value);
+            return this;
+        }
+
+        public Builder addFlag(String flag, boolean value) {
+            if (value) add(flag);
+            return this;
+        }
+
     }
 
     public static class Factory {
