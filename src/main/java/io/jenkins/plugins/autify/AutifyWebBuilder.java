@@ -7,6 +7,7 @@ import hudson.FilePath;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import hudson.util.Secret;
+import io.jenkins.plugins.autify.model.UrlReplacement;
 import hudson.model.AbstractProject;
 import hudson.model.Item;
 import hudson.model.Result;
@@ -24,10 +25,12 @@ import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 
-import javax.servlet.ServletException;
+import javax.annotation.CheckForNull;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
+import java.util.regex.Pattern;
 
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
@@ -42,6 +45,14 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
     private final String credentialsId;
     private final String autifyUrl;
     private boolean wait;
+    private String timeout;
+    private List<UrlReplacement> urlReplacements;
+    private String testExecutionName;
+    private String browser;
+    private String device;
+    private String deviceType;
+    private String os;
+    private String osVersion;
 
     private static AutifyCli.Factory autifyCliFactory = new AutifyCli.Factory();
     public static void setAutifyCliFactory(AutifyCli.Factory factory) {
@@ -74,6 +85,70 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
         this.wait = wait;
     }
 
+    public String getTimeout() {
+        return StringUtils.isEmpty(timeout) ? null : timeout;
+    }
+
+    public void setTimeout(final String value) {
+        this.timeout = value;
+    }
+
+    public List<UrlReplacement> getUrlReplacements() {
+        return urlReplacements == null ? Collections.emptyList() : urlReplacements;
+    }
+
+    public void setUrlReplacements(@CheckForNull List<UrlReplacement> value) {
+        this.urlReplacements = value;
+    }
+
+    public String getTestExecutionName() {
+        return testExecutionName;
+    }
+
+    public void setTestExecutionName(final String value) {
+        this.testExecutionName = value;
+    }
+
+    public String getBrowser() {
+        return browser;
+    }
+
+    public void setBrowser(final String value) {
+        this.browser = value;
+    }
+
+    public String getDevice() {
+        return device;
+    }
+
+    public void setDevice(final String value) {
+        this.device = value;
+    }
+
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(final String value) {
+        this.deviceType = value;
+    }
+
+    public String getOs() {
+        return os;
+    }
+
+    public void setOs(final String value) {
+        this.os = value;
+    }
+
+    public String getOsVersion() {
+        return osVersion;
+    }
+
+    public void setOsVersion(final String value) {
+        this.osVersion = value;
+    }
+
     @Override
     public void perform(Run<?, ?> run, FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
         StringCredentials credentials = CredentialsProvider.findCredentialById(credentialsId, StringCredentials.class, run, Collections.emptyList());
@@ -90,7 +165,7 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
             return;
         }
         autifyCli.webAuthLogin(webAccessToken);
-        if (autifyCli.webTestRun(autifyUrl, wait) != 0) {
+        if (autifyCli.webTestRun(autifyUrl, wait, timeout, urlReplacements, testExecutionName, browser, device, deviceType, os, osVersion) != 0) {
             listener.getLogger().println("Failed to execute autify web test run");
             run.setResult(Result.FAILURE);
             return;
@@ -100,6 +175,9 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
     @Symbol("autifyWeb")
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
+
+        private final static Pattern TEST_SCENARIO_URL_PATTERN = Pattern.compile("^https://app.autify.com/projects/\\d+/scenarios/\\d+/?$");
+        private final static Pattern TEST_PLAN_URL_PATTERN = Pattern.compile("^https://app.autify.com/projects/\\d+/test_plans/\\d+/?$");
 
         public ListBoxModel doFillCredentialsIdItems(@AncestorInPath Item item, @QueryParameter String credentialsId) {
             StandardListBoxModel result = new StandardListBoxModel();
@@ -129,7 +207,7 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
                 }
             }
             if (StringUtils.isBlank(value)) {
-                return FormValidation.error("Cannot be empty");
+                return FormValidation.error(Messages.AutifyWebBuilder_CannotBeEmpty());
             }
             if (CredentialsProvider.listCredentials(
                 StringCredentials.class,
@@ -138,16 +216,65 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
                 Collections.emptyList(),
                 CredentialsMatchers.withId(value)
             ).isEmpty()) {
-                return FormValidation.error("Cannot find currently selected credentials");
+                return FormValidation.error(Messages.AutifyWebBuilder_CannotFindCurrentlySelectedCredentials());
             }
             return FormValidation.ok();
         }
 
-        public FormValidation doCheckAutifyUrl(@QueryParameter String value, @QueryParameter boolean wait) throws IOException, ServletException {
+        public FormValidation doCheckAutifyUrl(@QueryParameter String value) {
             if (StringUtils.isBlank(value)) {
-                return FormValidation.error("Cannot be empty");
+                return FormValidation.error(Messages.AutifyWebBuilder_CannotBeEmpty());
+            }
+            if (!isTestScenarioUrl(value) && !isTestPlanUrl(value)) {
+                return FormValidation.error(Messages.AutifyWebBuilder_InvalidUrl());
             }
             return FormValidation.ok();
+        }
+
+        private boolean isTestScenarioUrl(String value) {
+            return TEST_SCENARIO_URL_PATTERN.matcher(value).find();
+        }
+
+        private boolean isTestPlanUrl(String value) {
+            return TEST_PLAN_URL_PATTERN.matcher(value).find();
+        }
+
+        public FormValidation doCheckTimeout(@QueryParameter String value, @QueryParameter boolean wait) {
+            if (StringUtils.isNotBlank(value) && !wait) {
+                return FormValidation.warning(Messages.AutifyWebBuilder_NoEffectWhenWaitIsUnchecked());
+            }
+            return FormValidation.ok();
+        }
+
+        private FormValidation checkEffectiveOnlyForTestScenarioUrl(String value, String autifyUrl) {
+            if (StringUtils.isNotBlank(value) && !isTestScenarioUrl(autifyUrl)) {
+                return FormValidation.warning(Messages.AutifyWebBuilder_EffectiveOnlyForTestScenarioUrl());
+            }
+            return FormValidation.ok(Messages.AutifyWebBuilder_EffectiveOnlyForTestScenarioUrl());
+        }
+
+        public FormValidation doCheckTestExecutionName(@QueryParameter String value, @QueryParameter String autifyUrl) {
+            return checkEffectiveOnlyForTestScenarioUrl(value, autifyUrl);
+        }
+
+        public FormValidation doCheckBrowser(@QueryParameter String value, @QueryParameter String autifyUrl) {
+            return checkEffectiveOnlyForTestScenarioUrl(value, autifyUrl);
+        }
+
+        public FormValidation doCheckDevice(@QueryParameter String value, @QueryParameter String autifyUrl) {
+            return checkEffectiveOnlyForTestScenarioUrl(value, autifyUrl);
+        }
+
+        public FormValidation doCheckDeviceType(@QueryParameter String value, @QueryParameter String autifyUrl) {
+            return checkEffectiveOnlyForTestScenarioUrl(value, autifyUrl);
+        }
+
+        public FormValidation doCheckOs(@QueryParameter String value, @QueryParameter String autifyUrl) {
+            return checkEffectiveOnlyForTestScenarioUrl(value, autifyUrl);
+        }
+
+        public FormValidation doCheckOsVersion(@QueryParameter String value, @QueryParameter String autifyUrl) {
+            return checkEffectiveOnlyForTestScenarioUrl(value, autifyUrl);
         }
 
         @Override

@@ -44,9 +44,9 @@ Go to configuration of your Project and click "Add build step" and select "Run t
 
 ![Screen Shot 2022-08-09 at 3 21 56 PM](https://user-images.githubusercontent.com/37822/183772297-59fa0e28-256f-4268-aefb-c25b72b825b1.png)
 
-Then, select `autifyWebAccessToken` from the select box of "Autify Personal Access Token" and paste the URL e.g. `https://app.autify.com/projects/00/scenarios/000` to "Autify test URL":
+Then, select `autifyWebAccessToken` from the select box of "Personal Access Token of Autify for Web" and paste the URL e.g. `https://app.autify.com/projects/00/scenarios/000` to "Autify for Web test URL":
 
-![Screen Shot 2022-08-09 at 3 23 17 PM](https://user-images.githubusercontent.com/37822/183772258-2f294ff2-dddd-492a-bf23-8ab0cd4f5f64.png)
+![Screen Shot 2022-08-11 at 4 42 09 PM](https://user-images.githubusercontent.com/37822/184260191-39bee0bb-69f4-489d-b356-7c7f7e0d53cc.png)
 
 Note: Check "Wait?" if you want to wait until the test finishes and succeed only if it passes.
 
