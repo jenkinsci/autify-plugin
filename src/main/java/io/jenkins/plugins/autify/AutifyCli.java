@@ -3,6 +3,7 @@ package io.jenkins.plugins.autify;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +29,7 @@ public class AutifyCli {
     }
 
     public int install() {
-        return runShellScript("AutifyCli/install.sh");
+        return runShellScript("https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/stable/install-cicd.bash");
     }
 
     public int webTestRun(String autifyUrl, boolean wait) {
@@ -86,20 +87,18 @@ public class AutifyCli {
         return envs;
     }
 
-    protected int runShellScript(String scriptName) {
-        InputStream scriptStream = getClass().getResourceAsStream(scriptName);
-        if (scriptStream == null) {
-            logger.println("Cannot find the script '" + scriptName + "'");
-            return 1;
-        }
-        int ret = runCommand(scriptStream, "bash", "-xe");
+    protected int runShellScript(String scriptUrl) {
         try {
+            URL url = new URL(scriptUrl);
+            InputStream scriptStream = url.openStream();
+            logger.println("Executing script from " + scriptUrl);
+            int ret = runCommand(scriptStream, "bash", "-xe");
             scriptStream.close();
+            return ret;
         } catch (IOException e) {
             e.printStackTrace(logger);
             return 1;
         }
-        return ret;
     }
 
     public static class Factory {
