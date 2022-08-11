@@ -1,13 +1,14 @@
 package io.jenkins.plugins.autify;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import hudson.FilePath;
 import hudson.Launcher;
+import hudson.Launcher.ProcStarter;
 import hudson.model.TaskListener;
 import hudson.util.ArgumentListBuilder;
 
@@ -56,15 +57,21 @@ public class AutifyCli {
     }
 
     protected int runCommand(String... command) {
+        return runCommand(null, command);
+    }
+
+    protected int runCommand(InputStream input, String... command) {
         try {
-            return launcher.launch()
+            ProcStarter procStarter = launcher.launch()
                 .pwd(workspace)
                 .envs(getEnvs())
                 .stdout(logger)
                 .stderr(logger)
-                .cmds(command)
-                .start()
-                .join();
+                .cmds(command);
+            if (input != null) {
+                procStarter = procStarter.stdin(input);
+            }
+            return procStarter.start().join();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace(logger);
             return 1;
@@ -79,19 +86,20 @@ public class AutifyCli {
         return envs;
     }
 
-    protected String getResourcePath(String name) {
-        URL url = getClass().getResource(name);
-        if (url == null) return null;
-        return url.getPath();
-    }
-
     protected int runShellScript(String scriptName) {
-        String scriptPath = getResourcePath(scriptName);
-        if (scriptPath == null) {
+        InputStream scriptStream = getClass().getResourceAsStream(scriptName);
+        if (scriptStream == null) {
             logger.println("Cannot find the script '" + scriptName + "'");
             return 1;
         }
-        return runCommand("bash", "-xe", scriptPath);
+        int ret = runCommand(scriptStream, "bash", "-xe");
+        try {
+            scriptStream.close();
+        } catch (IOException e) {
+            e.printStackTrace(logger);
+            return 1;
+        }
+        return ret;
     }
 
     public static class Factory {
