@@ -1,4 +1,4 @@
 <?jelly escape-by-default='true'?>
 <div>
-    Plugin to run a test on Autify for Web
+    Plugin to run a test on <a href="https://autify.com" rel="noopener noreferrer">Autify</a>.
 </div>
