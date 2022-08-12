@@ -86,10 +86,11 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
     }
 
     public String getTimeout() {
-        return StringUtils.isEmpty(timeout) ? null : timeout;
+        return StringUtils.trimToEmpty(timeout);
     }
 
-    public void setTimeout(final String value) {
+    @DataBoundSetter
+    public void setTimeout(@CheckForNull String value) {
         this.timeout = value;
     }
 
@@ -97,55 +98,62 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
         return urlReplacements == null ? Collections.emptyList() : urlReplacements;
     }
 
+    @DataBoundSetter
     public void setUrlReplacements(@CheckForNull List<UrlReplacement> value) {
         this.urlReplacements = value;
     }
 
     public String getTestExecutionName() {
-        return testExecutionName;
+        return StringUtils.trimToEmpty(testExecutionName);
     }
 
-    public void setTestExecutionName(final String value) {
+    @DataBoundSetter
+    public void setTestExecutionName(@CheckForNull String value) {
         this.testExecutionName = value;
     }
 
     public String getBrowser() {
-        return browser;
+        return StringUtils.trimToEmpty(browser);
     }
 
-    public void setBrowser(final String value) {
+    @DataBoundSetter
+    public void setBrowser(@CheckForNull String value) {
         this.browser = value;
     }
 
     public String getDevice() {
-        return device;
+        return StringUtils.trimToEmpty(device);
     }
 
-    public void setDevice(final String value) {
+    @DataBoundSetter
+    public void setDevice(@CheckForNull String value) {
         this.device = value;
     }
 
     public String getDeviceType() {
-        return deviceType;
+        return StringUtils.trimToEmpty(deviceType);
     }
 
-    public void setDeviceType(final String value) {
+    @DataBoundSetter
+    public void setDeviceType(@CheckForNull String value) {
         this.deviceType = value;
     }
 
     public String getOs() {
-        return os;
+        return StringUtils.trimToEmpty(os);
     }
 
-    public void setOs(final String value) {
+    @DataBoundSetter
+    public void setOs(@CheckForNull String value) {
         this.os = value;
     }
 
     public String getOsVersion() {
-        return osVersion;
+        return StringUtils.trimToEmpty(osVersion);
     }
 
-    public void setOsVersion(final String value) {
+    @DataBoundSetter
+    public void setOsVersion(@CheckForNull String value) {
         this.osVersion = value;
     }
 

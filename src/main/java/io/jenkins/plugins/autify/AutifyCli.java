@@ -8,15 +8,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Launcher.ProcStarter;
 import hudson.model.TaskListener;
 import hudson.util.ArgumentListBuilder;
-import io.jenkins.cli.shaded.org.apache.commons.lang.StringUtils;
 import io.jenkins.plugins.autify.model.UrlReplacement;
 
 public class AutifyCli {
+
+    public static final String INSTALL_SCRIPT_URL = "https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/stable/install-cicd.bash";
 
     protected final FilePath workspace;
     protected final Launcher launcher;
@@ -32,7 +35,7 @@ public class AutifyCli {
     }
 
     public int install() {
-        return runShellScript("https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/stable/install-cicd.bash");
+        return runShellScript(INSTALL_SCRIPT_URL);
     }
 
     public int webTestRun(String autifyUrl, boolean wait, String timeout, List<UrlReplacement> urlReplacements, String testExecutionName, String browser, String device, String deviceType, String os, String osVersion) {
@@ -118,8 +121,7 @@ public class AutifyCli {
         }
 
         public Builder addFlag(String flag, String value) {
-            value = StringUtils.trimToNull(value);
-            if (value != null) add(flag, value);
+            if (StringUtils.isNotBlank(value)) add(flag, value);
             return this;
         }
 
