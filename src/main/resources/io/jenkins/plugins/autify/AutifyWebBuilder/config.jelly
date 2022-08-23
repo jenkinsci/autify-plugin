@@ -34,5 +34,8 @@
         <f:entry title="${%OsVersion}" field="osVersion">
             <f:textbox placeholder="11.0 (Android) / 15 (iOS) / ..."/>
         </f:entry>
+        <f:entry title="${%AutifyConnect}" field="autifyConnect">
+            <f:textbox placeholder="your-autify-connect-access-point"/>
+        </f:entry>
     </f:advanced>
 </j:jelly>

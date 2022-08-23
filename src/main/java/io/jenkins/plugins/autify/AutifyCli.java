@@ -38,7 +38,7 @@ public class AutifyCli {
         return runShellScript(INSTALL_SCRIPT_URL);
     }
 
-    public int webTestRun(String autifyUrl, boolean wait, String timeout, List<UrlReplacement> urlReplacements, String testExecutionName, String browser, String device, String deviceType, String os, String osVersion) {
+    public int webTestRun(String autifyUrl, boolean wait, String timeout, List<UrlReplacement> urlReplacements, String testExecutionName, String browser, String device, String deviceType, String os, String osVersion, String autifyConnect) {
         Builder builder = new Builder("web", "test", "run");
         builder.add(autifyUrl);
         builder.addFlag("--wait", wait);
@@ -54,6 +54,7 @@ public class AutifyCli {
         builder.addFlag("--device-type", deviceType);
         builder.addFlag("--os", os);
         builder.addFlag("--os-version", osVersion);
+        builder.addFlag("--autify-connect", autifyConnect);
         return runCommand(builder);
     }
 
