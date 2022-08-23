@@ -45,6 +45,7 @@ public class AutifyWebBuilderTest {
         .add("--device-type", stub)
         .add("--os", stub)
         .add("--os-version", stub)
+        .add("--autify-connect", stub)
         .toString() + "\n";
 
     @Before
@@ -134,6 +135,7 @@ public class AutifyWebBuilderTest {
         builder.setDeviceType(stub);
         builder.setOs(stub);
         builder.setOsVersion(stub);
+        builder.setAutifyConnect(stub);
         project.getBuildersList().add(builder);
 
         FreeStyleBuild build = jenkins.buildAndAssertSuccess(project);
@@ -175,7 +177,8 @@ public class AutifyWebBuilderTest {
                 + "device: '"+ stub +"', "
                 + "deviceType: '"+ stub +"', "
                 + "os: '"+ stub +"', "
-                + "osVersion: '"+ stub +"'\n"
+                + "osVersion: '"+ stub +"', "
+                + "autifyConnect: '"+ stub +"'\n"
                 + "}";
         job.setDefinition(new CpsFlowDefinition(pipelineScript, true));
         WorkflowRun completedBuild = jenkins.assertBuildStatusSuccess(job.scheduleBuild2(0));

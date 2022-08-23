@@ -53,6 +53,7 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
     private String deviceType;
     private String os;
     private String osVersion;
+    private String autifyConnect;
 
     private static AutifyCli.Factory autifyCliFactory = new AutifyCli.Factory();
     public static void setAutifyCliFactory(AutifyCli.Factory factory) {
@@ -157,6 +158,15 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
         this.osVersion = value;
     }
 
+    public String getAutifyConnect() {
+        return StringUtils.trimToEmpty(autifyConnect);
+    }
+
+    @DataBoundSetter
+    public void setAutifyConnect(@CheckForNull String value) {
+        this.autifyConnect = value;
+    }
+
     @Override
     public void perform(Run<?, ?> run, FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
         StringCredentials credentials = CredentialsProvider.findCredentialById(credentialsId, StringCredentials.class, run, Collections.emptyList());
@@ -173,7 +183,7 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
             return;
         }
         autifyCli.webAuthLogin(webAccessToken);
-        if (autifyCli.webTestRun(autifyUrl, wait, timeout, urlReplacements, testExecutionName, browser, device, deviceType, os, osVersion) != 0) {
+        if (autifyCli.webTestRun(autifyUrl, wait, timeout, urlReplacements, testExecutionName, browser, device, deviceType, os, osVersion, autifyConnect) != 0) {
             listener.getLogger().println("Failed to execute autify web test run");
             run.setResult(Result.FAILURE);
             return;
@@ -285,6 +295,9 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
             return checkEffectiveOnlyForTestScenarioUrl(value, autifyUrl);
         }
 
+        public FormValidation doCheckAutifyConnect(@QueryParameter String value, @QueryParameter String autifyUrl) {
+            return checkEffectiveOnlyForTestScenarioUrl(value, autifyUrl);
+        }
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> aClass) {
             return true;
