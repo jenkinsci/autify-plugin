@@ -58,6 +58,25 @@ public class AutifyCli {
         return runCommand(builder);
     }
 
+    public int mobileTestRun(String autifyUrl, String buildId, String buildPath, boolean wait, String timeout) {
+        Builder builder = new Builder("mobile", "test", "run");
+        builder.add(autifyUrl);
+        if (StringUtils.isNotBlank(buildId) && StringUtils.isNotBlank(buildPath)) {
+            logger.println("Cannot specify both buildId and buildPath.");
+            return 1;
+        } else if (StringUtils.isNotBlank(buildId)) {
+            builder.addFlag("--build-id", buildId);
+        } else if (StringUtils.isNotBlank(buildPath)) {
+            builder.addFlag("--build-path", buildPath);
+        } else {
+            logger.println("Either buildId or buildPath is required.");
+            return 1;
+        }
+        builder.addFlag("--wait", wait);
+        builder.addFlag("--timeout", timeout);
+        return runCommand(builder);
+    }
+
     public void webAuthLogin(String webAccessToken) {
         this.webAccessToken = webAccessToken;
     }
