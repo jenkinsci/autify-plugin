@@ -129,6 +129,16 @@
                             <goal>npm</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>npx autify-mobile-generate-fake-app</id>
+                        <goals>
+                            <goal>npx</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <arguments>autify-mobile-generate-fake-app</arguments>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
