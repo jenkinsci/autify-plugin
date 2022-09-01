@@ -1,6 +1,6 @@
 # Autify Plugin
 
-![logo_Autify_yoko_c_RGB](https://user-images.githubusercontent.com/37822/183773852-ef120bb6-7c8d-42ca-831d-72ecc0e91c98.jpg)
+![ogp_cicd-w-autif](https://user-images.githubusercontent.com/37822/187934280-103d18a2-d979-4d00-84e7-24db1766a2e4.png)
 
 ## Introduction
 
