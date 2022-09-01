@@ -77,6 +77,13 @@ public class AutifyCli {
         return runCommand(builder);
     }
 
+    public int mobileBuildUpload(String workspaceId, String buildPath) {
+        Builder builder = new Builder("mobile", "build", "upload");
+        builder.add(buildPath);
+        builder.addFlag("--workspace-id", workspaceId);
+        return runCommand(builder);
+    }
+
     public void webAuthLogin(String webAccessToken) {
         this.webAccessToken = webAccessToken;
     }
