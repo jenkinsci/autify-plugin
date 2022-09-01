@@ -1,0 +1,12 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:c="/lib/credentials">
+    <f:entry title="${%Credentials}" field="credentialsId">
+        <c:select/>
+    </f:entry>
+    <f:entry title="${%WorkspaceId}" field="workspaceId" description="${%WorkspaceIdDescription}">
+        <f:textbox placeholder="ID of https://mobile-app.autify.com/projects/&lt;ID&gt;" />
+    </f:entry>
+    <f:entry title="${%BuildPath}" field="buildPath" description="${%BuildPathDescription}">
+        <f:textbox placeholder="path/to/ios.app or path/to/android.apk in the workspace"/>
+    </f:entry>
+</j:jelly>
