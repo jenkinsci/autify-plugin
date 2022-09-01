@@ -122,7 +122,9 @@ public class AutifyCli {
         Map<String, String> envs = new HashMap<String, String>();
         envs.put("AUTIFY_WEB_ACCESS_TOKEN", webAccessToken);
         envs.put("AUTIFY_MOBILE_ACCESS_TOKEN", mobileAccessToken);
-        envs.put("XDG_DATA_HOME", workspace + "/.config");
+        envs.put("XDG_CACHE_HOME", workspace + "/.cache");
+        envs.put("XDG_CONFIG_HOME", workspace + "/.config");
+        envs.put("XDG_DATA_HOME", workspace + "/.data");
         return envs;
     }
 
