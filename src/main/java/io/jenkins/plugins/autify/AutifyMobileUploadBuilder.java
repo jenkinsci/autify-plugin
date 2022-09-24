@@ -18,6 +18,7 @@ import hudson.tasks.BuildStepDescriptor;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import com.cloudbees.plugins.credentials.CredentialsMatchers;
@@ -26,6 +27,8 @@ import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 
 import java.io.IOException;
 import java.util.Collections;
+
+import javax.annotation.CheckForNull;
 
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
@@ -39,14 +42,8 @@ public class AutifyMobileUploadBuilder extends Builder implements SimpleBuildSte
     private final String credentialsId;
     private final String workspaceId;
     private final String buildPath;
-
-    private static AutifyCli.Factory autifyCliFactory = new AutifyCli.Factory();
-    public static void setAutifyCliFactory(AutifyCli.Factory factory) {
-        autifyCliFactory = factory;
-    }
-    public static void resetAutifyCliFactory() {
-        autifyCliFactory = new AutifyCli.Factory();
-    }
+    private String autifyPath;
+    private String shellInstallerUrl;
 
     @DataBoundConstructor
     public AutifyMobileUploadBuilder(String credentialsId, String workspaceId, String buildPath) {
@@ -67,16 +64,36 @@ public class AutifyMobileUploadBuilder extends Builder implements SimpleBuildSte
         return StringUtils.trimToEmpty(buildPath);
     }
 
+    public String getAutifyPath() {
+        return StringUtils.trimToEmpty(autifyPath);
+    }
+
+    @DataBoundSetter
+    public void setAutifyPath(@CheckForNull String value) {
+        this.autifyPath = value;
+    }
+
+    public String getShellInstallerUrl() {
+        return StringUtils.trimToEmpty(shellInstallerUrl);
+    }
+
+    @DataBoundSetter
+    public void setShellInstallerUrl(@CheckForNull String value) {
+        this.shellInstallerUrl = value;
+    }
+
     @Override
-    public void perform(Run<?, ?> run, FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
-        StringCredentials credentials = CredentialsProvider.findCredentialById(credentialsId, StringCredentials.class, run, Collections.emptyList());
+    public void perform(Run<?, ?> run, FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener)
+            throws InterruptedException, IOException {
+        StringCredentials credentials = CredentialsProvider.findCredentialById(credentialsId, StringCredentials.class,
+                run, Collections.emptyList());
         if (credentials == null) {
-            listener.getLogger().println("Cannot find any credentials for "+ credentialsId);
+            listener.getLogger().println("Cannot find any credentials for " + credentialsId);
             run.setResult(Result.FAILURE);
             return;
         }
         String mobileAccessToken = Secret.toString(credentials.getSecret());
-        AutifyCli autifyCli = autifyCliFactory.get(workspace, launcher, listener);
+        AutifyCli autifyCli = new AutifyCli(workspace, launcher, listener, autifyPath, shellInstallerUrl);
         if (autifyCli.install() != 0) {
             listener.getLogger().println("Failed to install autify-cli");
             run.setResult(Result.FAILURE);
@@ -106,9 +123,10 @@ public class AutifyMobileUploadBuilder extends Builder implements SimpleBuildSte
                 }
             }
             return result
-            .includeEmptyValue()
-            .includeMatchingAs(ACL.SYSTEM, item, StringCredentials.class, Collections.emptyList(), CredentialsMatchers.always())
-            .includeCurrentValue(credentialsId);
+                    .includeEmptyValue()
+                    .includeMatchingAs(ACL.SYSTEM, item, StringCredentials.class, Collections.emptyList(),
+                            CredentialsMatchers.always())
+                    .includeCurrentValue(credentialsId);
         }
 
         public FormValidation doCheckCredentialsId(@AncestorInPath Item item, @QueryParameter String value) {
@@ -125,13 +143,13 @@ public class AutifyMobileUploadBuilder extends Builder implements SimpleBuildSte
                 return FormValidation.error(Messages.AutifyMobileUploadBuilder_CannotBeEmpty());
             }
             if (CredentialsProvider.listCredentials(
-                StringCredentials.class,
-                item,
-                ACL.SYSTEM,
-                Collections.emptyList(),
-                CredentialsMatchers.withId(value)
-            ).isEmpty()) {
-                return FormValidation.error(Messages.AutifyMobileUploadBuilder_CannotFindCurrentlySelectedCredentials());
+                    StringCredentials.class,
+                    item,
+                    ACL.SYSTEM,
+                    Collections.emptyList(),
+                    CredentialsMatchers.withId(value)).isEmpty()) {
+                return FormValidation
+                        .error(Messages.AutifyMobileUploadBuilder_CannotFindCurrentlySelectedCredentials());
             }
             return FormValidation.ok();
         }
