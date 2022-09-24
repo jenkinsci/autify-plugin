@@ -54,14 +54,8 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
     private String os;
     private String osVersion;
     private String autifyConnect;
-
-    private static AutifyCli.Factory autifyCliFactory = new AutifyCli.Factory();
-    public static void setAutifyCliFactory(AutifyCli.Factory factory) {
-        autifyCliFactory = factory;
-    }
-    public static void resetAutifyCliFactory() {
-        autifyCliFactory = new AutifyCli.Factory();
-    }
+    private String autifyPath;
+    private String shellInstallerUrl;
 
     @DataBoundConstructor
     public AutifyWebBuilder(String credentialsId, String autifyUrl) {
@@ -167,23 +161,44 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
         this.autifyConnect = value;
     }
 
+    public String getAutifyPath() {
+        return StringUtils.trimToEmpty(autifyPath);
+    }
+
+    @DataBoundSetter
+    public void setAutifyPath(@CheckForNull String value) {
+        this.autifyPath = value;
+    }
+
+    public String getShellInstallerUrl() {
+        return StringUtils.trimToEmpty(shellInstallerUrl);
+    }
+
+    @DataBoundSetter
+    public void setShellInstallerUrl(@CheckForNull String value) {
+        this.shellInstallerUrl = value;
+    }
+
     @Override
-    public void perform(Run<?, ?> run, FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
-        StringCredentials credentials = CredentialsProvider.findCredentialById(credentialsId, StringCredentials.class, run, Collections.emptyList());
+    public void perform(Run<?, ?> run, FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener)
+            throws InterruptedException, IOException {
+        StringCredentials credentials = CredentialsProvider.findCredentialById(credentialsId, StringCredentials.class,
+                run, Collections.emptyList());
         if (credentials == null) {
-            listener.getLogger().println("Cannot find any credentials for "+ credentialsId);
+            listener.getLogger().println("Cannot find any credentials for " + credentialsId);
             run.setResult(Result.FAILURE);
             return;
         }
         String webAccessToken = Secret.toString(credentials.getSecret());
-        AutifyCli autifyCli = autifyCliFactory.get(workspace, launcher, listener);
+        AutifyCli autifyCli = new AutifyCli(workspace, launcher, listener, autifyPath, shellInstallerUrl);
         if (autifyCli.install() != 0) {
             listener.getLogger().println("Failed to install autify-cli");
             run.setResult(Result.FAILURE);
             return;
         }
         autifyCli.webAuthLogin(webAccessToken);
-        if (autifyCli.webTestRun(autifyUrl, wait, timeout, urlReplacements, testExecutionName, browser, device, deviceType, os, osVersion, autifyConnect) != 0) {
+        if (autifyCli.webTestRun(autifyUrl, wait, timeout, urlReplacements, testExecutionName, browser, device,
+                deviceType, os, osVersion, autifyConnect) != 0) {
             listener.getLogger().println("Failed to execute autify web test run");
             run.setResult(Result.FAILURE);
             return;
@@ -194,8 +209,10 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
 
-        private final static Pattern TEST_SCENARIO_URL_PATTERN = Pattern.compile("^https://app.autify.com/projects/\\d+/scenarios/\\d+/?$");
-        private final static Pattern TEST_PLAN_URL_PATTERN = Pattern.compile("^https://app.autify.com/projects/\\d+/test_plans/\\d+/?$");
+        private final static Pattern TEST_SCENARIO_URL_PATTERN = Pattern
+                .compile("^https://app.autify.com/projects/\\d+/scenarios/\\d+/?$");
+        private final static Pattern TEST_PLAN_URL_PATTERN = Pattern
+                .compile("^https://app.autify.com/projects/\\d+/test_plans/\\d+/?$");
 
         public ListBoxModel doFillCredentialsIdItems(@AncestorInPath Item item, @QueryParameter String credentialsId) {
             StandardListBoxModel result = new StandardListBoxModel();
@@ -209,9 +226,10 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
                 }
             }
             return result
-            .includeEmptyValue()
-            .includeMatchingAs(ACL.SYSTEM, item, StringCredentials.class, Collections.emptyList(), CredentialsMatchers.always())
-            .includeCurrentValue(credentialsId);
+                    .includeEmptyValue()
+                    .includeMatchingAs(ACL.SYSTEM, item, StringCredentials.class, Collections.emptyList(),
+                            CredentialsMatchers.always())
+                    .includeCurrentValue(credentialsId);
         }
 
         public FormValidation doCheckCredentialsId(@AncestorInPath Item item, @QueryParameter String value) {
@@ -228,12 +246,11 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
                 return FormValidation.error(Messages.AutifyWebBuilder_CannotBeEmpty());
             }
             if (CredentialsProvider.listCredentials(
-                StringCredentials.class,
-                item,
-                ACL.SYSTEM,
-                Collections.emptyList(),
-                CredentialsMatchers.withId(value)
-            ).isEmpty()) {
+                    StringCredentials.class,
+                    item,
+                    ACL.SYSTEM,
+                    Collections.emptyList(),
+                    CredentialsMatchers.withId(value)).isEmpty()) {
                 return FormValidation.error(Messages.AutifyWebBuilder_CannotFindCurrentlySelectedCredentials());
             }
             return FormValidation.ok();
@@ -298,6 +315,7 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
         public FormValidation doCheckAutifyConnect(@QueryParameter String value, @QueryParameter String autifyUrl) {
             return checkEffectiveOnlyForTestScenarioUrl(value, autifyUrl);
         }
+
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> aClass) {
             return true;

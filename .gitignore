@@ -19,9 +19,3 @@ work
 
 # Node.js
 node
-node_modules
-package-lock.json
-
-# autify-cli-integration-test
-ios.app
-android.apk

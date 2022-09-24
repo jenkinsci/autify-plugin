@@ -1,0 +1,25 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job">
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps">
+    <script>
+pipeline {
+  agent any
+
+  stages {
+    stage('Test') {
+      steps {
+        autifyWeb autifyPath: 'autify-with-proxy', autifyUrl: 'https://app.autify.com/projects/000/scenarios/0000', credentialsId: 'autifyWebAccessToken'
+        autifyWeb autifyPath: 'autify-with-proxy', autifyUrl: 'https://app.autify.com/projects/000/scenarios/0000', credentialsId: 'autifyWebAccessToken', wait: true
+      }
+    }
+  }
+}
+</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
