@@ -1,0 +1,27 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job">
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps">
+    <script>
+pipeline {
+  agent any
+
+  stages {
+    stage('Test') {
+      steps {
+        autifyMobile buildId: 'AAA', autifyPath: 'autify-with-proxy', autifyUrl: 'https://mobile-app.autify.com/projects/AAA/test_plans/BBB', credentialsId: 'autifyMobileAccessToken'
+        autifyMobile buildId: 'AAA', wait: true, autifyPath: 'autify-with-proxy', autifyUrl: 'https://mobile-app.autify.com/projects/AAA/test_plans/BBB', credentialsId: 'autifyMobileAccessToken'
+        autifyMobile buildPath: './android.apk', wait: true, autifyPath: 'autify-with-proxy', autifyUrl: 'https://mobile-app.autify.com/projects/AAA/test_plans/BBB', credentialsId: 'autifyMobileAccessToken'
+        autifyMobile buildPath: './ios.app', wait: true, autifyPath: 'autify-with-proxy', autifyUrl: 'https://mobile-app.autify.com/projects/AAA/test_plans/BBB', credentialsId: 'autifyMobileAccessToken'
+      }
+    }
+  }
+}
+</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>

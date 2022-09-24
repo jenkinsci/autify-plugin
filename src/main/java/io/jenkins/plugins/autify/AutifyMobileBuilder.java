@@ -46,14 +46,8 @@ public class AutifyMobileBuilder extends Builder implements SimpleBuildStep {
     private String buildPath;
     private boolean wait;
     private String timeout;
-
-    private static AutifyCli.Factory autifyCliFactory = new AutifyCli.Factory();
-    public static void setAutifyCliFactory(AutifyCli.Factory factory) {
-        autifyCliFactory = factory;
-    }
-    public static void resetAutifyCliFactory() {
-        autifyCliFactory = new AutifyCli.Factory();
-    }
+    private String autifyPath;
+    private String shellInstallerUrl;
 
     @DataBoundConstructor
     public AutifyMobileBuilder(String credentialsId, String autifyUrl) {
@@ -105,16 +99,36 @@ public class AutifyMobileBuilder extends Builder implements SimpleBuildStep {
         this.timeout = value;
     }
 
+    public String getAutifyPath() {
+        return StringUtils.trimToEmpty(autifyPath);
+    }
+
+    @DataBoundSetter
+    public void setAutifyPath(@CheckForNull String value) {
+        this.autifyPath = value;
+    }
+
+    public String getShellInstallerUrl() {
+        return StringUtils.trimToEmpty(shellInstallerUrl);
+    }
+
+    @DataBoundSetter
+    public void setShellInstallerUrl(@CheckForNull String value) {
+        this.shellInstallerUrl = value;
+    }
+
     @Override
-    public void perform(Run<?, ?> run, FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
-        StringCredentials credentials = CredentialsProvider.findCredentialById(credentialsId, StringCredentials.class, run, Collections.emptyList());
+    public void perform(Run<?, ?> run, FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener)
+            throws InterruptedException, IOException {
+        StringCredentials credentials = CredentialsProvider.findCredentialById(credentialsId, StringCredentials.class,
+                run, Collections.emptyList());
         if (credentials == null) {
-            listener.getLogger().println("Cannot find any credentials for "+ credentialsId);
+            listener.getLogger().println("Cannot find any credentials for " + credentialsId);
             run.setResult(Result.FAILURE);
             return;
         }
         String mobileAccessToken = Secret.toString(credentials.getSecret());
-        AutifyCli autifyCli = autifyCliFactory.get(workspace, launcher, listener);
+        AutifyCli autifyCli = new AutifyCli(workspace, launcher, listener, autifyPath, shellInstallerUrl);
         if (autifyCli.install() != 0) {
             listener.getLogger().println("Failed to install autify-cli");
             run.setResult(Result.FAILURE);
@@ -132,7 +146,8 @@ public class AutifyMobileBuilder extends Builder implements SimpleBuildStep {
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
 
-        private final static Pattern TEST_PLAN_URL_PATTERN = Pattern.compile("^https://mobile-app.autify.com/projects/[^/]+/test_plans/[^/]+/?$");
+        private final static Pattern TEST_PLAN_URL_PATTERN = Pattern
+                .compile("^https://mobile-app.autify.com/projects/[^/]+/test_plans/[^/]+/?$");
 
         public ListBoxModel doFillCredentialsIdItems(@AncestorInPath Item item, @QueryParameter String credentialsId) {
             StandardListBoxModel result = new StandardListBoxModel();
@@ -146,9 +161,10 @@ public class AutifyMobileBuilder extends Builder implements SimpleBuildStep {
                 }
             }
             return result
-            .includeEmptyValue()
-            .includeMatchingAs(ACL.SYSTEM, item, StringCredentials.class, Collections.emptyList(), CredentialsMatchers.always())
-            .includeCurrentValue(credentialsId);
+                    .includeEmptyValue()
+                    .includeMatchingAs(ACL.SYSTEM, item, StringCredentials.class, Collections.emptyList(),
+                            CredentialsMatchers.always())
+                    .includeCurrentValue(credentialsId);
         }
 
         public FormValidation doCheckCredentialsId(@AncestorInPath Item item, @QueryParameter String value) {
@@ -165,12 +181,11 @@ public class AutifyMobileBuilder extends Builder implements SimpleBuildStep {
                 return FormValidation.error(Messages.AutifyMobileBuilder_CannotBeEmpty());
             }
             if (CredentialsProvider.listCredentials(
-                StringCredentials.class,
-                item,
-                ACL.SYSTEM,
-                Collections.emptyList(),
-                CredentialsMatchers.withId(value)
-            ).isEmpty()) {
+                    StringCredentials.class,
+                    item,
+                    ACL.SYSTEM,
+                    Collections.emptyList(),
+                    CredentialsMatchers.withId(value)).isEmpty()) {
                 return FormValidation.error(Messages.AutifyMobileBuilder_CannotFindCurrentlySelectedCredentials());
             }
             return FormValidation.ok();
