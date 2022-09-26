@@ -6,7 +6,7 @@ ROOT_DIR=$(dirname "$SCRIPT_DIR");
 TARGET_TMP_DIR="$ROOT_DIR/target/tmp"
 
 export JENKINS_HOME="$TARGET_TMP_DIR/jenkins_home"
-export PATH="$ROOT_DIR/node:$PATH"
+export PATH="$ROOT_DIR/node:$ROOT_DIR/target/tmp/PortableGit/usr/bin:$PATH"
 export AUTIFY_CLI_INSTALL_USE_CACHE=1
 export AUTIFY_CLI_INTEGRATION_TEST_INSTALL=1
 export AUTIFY_TEST_WAIT_INTERVAL_SECOND=0
