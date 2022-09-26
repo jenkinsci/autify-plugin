@@ -2,6 +2,8 @@
  See the documentation for more options:
  https://github.com/jenkins-infra/pipeline-library/
 */
+
+/*
 infra.ensureInNode('docker-windows') {
   stage("Install git-windows") {
     environment {
@@ -25,8 +27,11 @@ infra.ensureInNode('docker-windows') {
   }
 }
 
+*/
+nodejs(nodeJSInstallationName: 'Node 16.x') {
 buildPlugin(
   useContainerAgent: true,
   jdkVersions: [11],
   platforms: ['docker-windows']
 )
+}
