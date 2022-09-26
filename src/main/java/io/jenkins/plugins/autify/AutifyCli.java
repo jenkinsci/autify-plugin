@@ -161,13 +161,15 @@ public class AutifyCli {
     private int runBashScript(InputStream scriptStream, ArgumentListBuilder builder) {
         try {
             int ret;
-            // if (SystemUtils.IS_OS_WINDOWS) {
-            // String command = "bash" + " -xe -s - " + builder.toString();
-            // ret = runCommand(scriptStream, "cmd.exe", "/C", command);
-            // } else {
-            builder.prepend("bash", "-xe", "-s", "-");
-            ret = runCommand(scriptStream, builder);
-            // }
+            if (SystemUtils.IS_OS_WINDOWS) {
+                // String command = "bash" + " -xe -s - " + builder.toString();
+                // ret = runCommand(scriptStream, "cmd.exe", "/C", command);
+                builder.prepend("bash.exe", "-xe", "-s", "-");
+                ret = runCommand(scriptStream, builder);
+            } else {
+                builder.prepend("bash", "-xe", "-s", "-");
+                ret = runCommand(scriptStream, builder);
+            }
             scriptStream.close();
             return ret;
         } catch (IOException e) {

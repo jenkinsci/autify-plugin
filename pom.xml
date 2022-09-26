@@ -153,9 +153,12 @@
                                 <configuration>
                                     <executable>${basedir}\target\tmp\PortableGit\bin\bash.exe</executable>
                                     <arguments>
-                                        <argument>${basedir}/integration-test/java-integration-test.bash</argument>
-                                        <argument>${basedir}/target/autify.hpi</argument>
+                                        <argument>${basedir}\integration-test/java-integration-test.bash</argument>
+                                        <argument>${basedir}\target\autify.hpi</argument>
                                     </arguments>
+                                    <environmentVariables>
+                                        <PATH>${env.PATH}${basedir}\target\tmp\PortableGit\bin;${basedir}\target\tmp\PortableGit\usr\bin</PATH>
+                                    </environmentVariables>
                                 </configuration>
                             </execution>
                         </executions>
