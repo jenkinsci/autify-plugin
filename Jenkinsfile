@@ -5,7 +5,7 @@
 
 infra.ensureInNode('docker-windows') {
   stage("Install git-windows") {
-    bat 'choco install git -v -d -y -f --params="/GitAndUnixToolsOnPath"'
+    bat 'choco install git.portable -v -d -y -f'
     withEnv(["Path=C:\\ProgramData\\chocolatey\\lib\\git\\bin;${env.PATH}"]) {
       bat 'echo %PATH%'
     }
