@@ -3,6 +3,9 @@
  https://github.com/jenkins-infra/pipeline-library/
 */
 
+    environment {
+      FOO = "bar"
+    }
 infra.ensureInNode('docker-windows') {
   stage("Install git-windows") {
     environment {
@@ -18,10 +21,6 @@ infra.ensureInNode('docker-windows') {
     bat 'ECHO %PATH%'
   }
   stage("Verify bash.exe") {
-    environment {
-      PATH = ".\\PortableGit\\bin;${env.PATH}"
-      FOO = "bar"
-    }
     bat 'SET'
     bat 'ECHO %PATH%'
     bat '%cd%\\PortableGit\\bin\\bash.exe --version'
