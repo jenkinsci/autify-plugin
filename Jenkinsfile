@@ -29,5 +29,5 @@ infra.ensureInNode('docker-windows') {
 buildPlugin(
   useContainerAgent: true,
   jdkVersions: [11],
-  platforms: ['linux', 'windows']
+  platforms: ['linux', 'docker-windows']
 )
