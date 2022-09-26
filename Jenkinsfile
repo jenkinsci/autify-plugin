@@ -9,12 +9,18 @@ infra.ensureInNode('docker-windows') {
     bat 'bash.exe --version'
   }
 
-withEnv(["Path=C:\\foo;${env.PATH}"]) {
-  buildPlugin(
-    useContainerAgent: true,
-    jdkVersions: [11],
-    platforms: ['docker-windows']
-  )
-}
+  stage("Install Node.js") {
+    bat 'choco install nodejs-lts -v -d -y -f'
+    bat 'dir "C:\\Program Files\\nodejs\\node.exe"'
+    bat 'dir "C:\\Program Files (x86)\\nodejs\\node.exe"'
+  }
+
+  withEnv(["Path=C:\\foo;${env.PATH}"]) {
+    buildPlugin(
+      useContainerAgent: true,
+      jdkVersions: [11],
+      platforms: ['docker-windows']
+    )
+  }
 }
 
