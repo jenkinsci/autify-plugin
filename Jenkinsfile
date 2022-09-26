@@ -8,11 +8,6 @@ infra.ensureInNode('docker-windows') {
     bat 'choco install git.portable -v -d -y -f'
     bat 'bash.exe --version'
   }
-
-  stage("Install Node.js") {
-    bat 'choco install nodejs-lts -v -d -y -f --installArguments="INSTALLDIR=\"C:\\tools\\nodejs\""'
-    bat 'C:\\tools\\nodejs\\bin\\node.exe --version'
-  }
 }
 
 withEnv(["Path=C:\\foo;${env.PATH}"]) {
