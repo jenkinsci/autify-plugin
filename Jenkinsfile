@@ -6,10 +6,10 @@
 infra.ensureInNode('docker-windows') {
   stage("Install git-windows") {
     bat 'choco install git.portable -v -d -y -f'
+    bat 'echo %PATH%'
     withEnv(["Path=C:\\ProgramData\\chocolatey\\lib\\git\\bin;${env.PATH}"]) {
       bat 'echo %PATH%'
     }
-    bat '"C:\\ProgramData\\chocolatey\\lib\\git\\bin\\bash.exe" --version'
     bat 'bash.exe --version'
   }
 }
@@ -17,5 +17,5 @@ infra.ensureInNode('docker-windows') {
 buildPlugin(
   useContainerAgent: true,
   jdkVersions: [11],
-  platforms: ['linux', 'docker-windows']
+  platforms: ['docker-windows']
 )
