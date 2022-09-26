@@ -14,12 +14,15 @@ infra.ensureInNode('docker-windows') {
     bat 'SETX /M PATH \"%cd%\\PortableGit\\bin;%PATH%\"'
     bat 'SETX PATH \"%cd%\\PortableGit\\bin;%PATH%\"'
     bat 'SET PATH=\"%cd%\\PortableGit\\bin;%PATH%\"'
+    bat 'SET'
     bat 'ECHO %PATH%'
   }
   stage("Verify bash.exe") {
     environment {
       PATH = ".\\PortableGit\\bin;${env.PATH}"
+      FOO = "bar"
     }
+    bat 'SET'
     bat 'ECHO %PATH%'
     bat '%cd%\\PortableGit\\bin\\bash.exe --version'
     bat 'bash.exe --version'
