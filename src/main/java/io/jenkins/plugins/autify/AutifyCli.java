@@ -162,10 +162,8 @@ public class AutifyCli {
         try {
             int ret;
             if (SystemUtils.IS_OS_WINDOWS) {
-                // String command = "bash" + " -xe -s - " + builder.toString();
-                // ret = runCommand(scriptStream, "cmd.exe", "/C", command);
-                builder.prepend("bash.exe", "-xe", "-s", "-");
-                ret = runCommand(scriptStream, builder);
+                String command = "bash -xe -s - " + builder.toString();
+                ret = runCommand(scriptStream, "cmd.exe", "/C", command);
             } else {
                 builder.prepend("bash", "-xe", "-s", "-");
                 ret = runCommand(scriptStream, builder);
