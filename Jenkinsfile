@@ -9,11 +9,6 @@ infra.ensureInNode('docker-windows') {
     bat 'bash.exe --version'
   }
 
-  stage("Install Node.js") {
-    bat 'choco install nodejs-lts -v -d -y -f'
-    bat 'node.exe --version'
-  }
-
   stage("env") {
     environment {
       Path = "foo;${env.PATH}"
