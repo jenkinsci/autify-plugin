@@ -3,12 +3,7 @@
  https://github.com/jenkins-infra/pipeline-library/
 */
 
-pipeline {
-  agent any
-  stages {
-    stage("foo") {
-      parallel {
-
+/*
 infra.ensureInNode('docker-windows') {
   stage("Install Git Bash") {
     bat 'choco install git.portable -v -d -y -f'
@@ -29,16 +24,10 @@ infra.ensureInNode('docker-windows') {
     )
   }
 }
+*/
 
 buildPlugin(
   useContainerAgent: true,
   jdkVersions: [11],
-  platforms: ['linux']
+  platforms: ['linux', 'windows']
 )
-
-      }
-
-    }
-  }
-}
-

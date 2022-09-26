@@ -121,6 +121,20 @@
                         <version>3.1.0</version>
                         <executions>
                             <execution>
+                                <id>install-git-bash</id>
+                                <phase>process-test-resources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>cmd.exe</executable>
+                                    <arguments>
+                                        <argument>/C</argument>
+                                        <argument>choco install git.portable -y -v -d -f</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
                                 <id>integration-test</id>
                                 <phase>integration-test</phase>
                                 <goals>
