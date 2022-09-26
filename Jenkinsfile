@@ -13,9 +13,12 @@ infra.ensureInNode('docker-windows') {
     bat 'choco install nodejs-lts -v -d -y -f --installArguments="INSTALLDIR=\"C:\\tools\\nodejs\""'
     bat 'C:\\tools\\nodejs\\bin\\node.exe --version'
   }
+}
 
-buildPlugin(
-  useContainerAgent: true,
-  jdkVersions: [11],
-  platforms: ['docker-windows']
-)
+withEnv(["Path=C:\\foo;${env.PATH}"]) {
+  buildPlugin(
+    useContainerAgent: true,
+    jdkVersions: [11],
+    platforms: ['docker-windows']
+  )
+}
