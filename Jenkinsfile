@@ -8,7 +8,6 @@ infra.ensureInNode('docker-windows') {
     bat 'choco install git.portable -v -d -y -f'
     bat 'bash.exe --version'
   }
-}
 
 withEnv(["Path=C:\\foo;${env.PATH}"]) {
   buildPlugin(
@@ -17,3 +16,5 @@ withEnv(["Path=C:\\foo;${env.PATH}"]) {
     platforms: ['docker-windows']
   )
 }
+}
+
