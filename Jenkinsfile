@@ -6,7 +6,8 @@
 pipeline {
   agent any
   stages {
-    parallel {
+    stage("foo") {
+      parallel {
 
 infra.ensureInNode('docker-windows') {
   stage("Install Git Bash") {
@@ -34,6 +35,8 @@ buildPlugin(
   jdkVersions: [11],
   platforms: ['linux']
 )
+
+      }
 
     }
   }
