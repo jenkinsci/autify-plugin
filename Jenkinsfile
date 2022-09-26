@@ -3,6 +3,8 @@
  https://github.com/jenkins-infra/pipeline-library/
 */
 
+pipeline {
+  agent any
   stages {
     parallel {
 
@@ -35,3 +37,5 @@ buildPlugin(
 
     }
   }
+}
+
