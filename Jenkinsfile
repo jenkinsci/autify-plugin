@@ -8,6 +8,10 @@ infra.ensureInNode('docker-windows') {
     bat '.\\PortableGit.7z.exe -y'
     bat 'SETX /M PATH \"%cd%\\PortableGit\\bin;%PATH%\"'
   }
+  stage("Verify bash.exe") {
+    bat 'ECHO %PATH%'
+    bat 'bash.exe --version'
+  }
 }
 
 buildPlugin(
