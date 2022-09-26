@@ -5,8 +5,7 @@
 
 infra.ensureInNode('docker-windows') {
   stage("Install git-windows") {
-    bat 'choco install git.portable -v -d -y'
-    bat 'choco info git.portable -v -d'
+    bat 'choco install git -v -d -y -f'
     bat 'bash.exe --version'
   }
 }
