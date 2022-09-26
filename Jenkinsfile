@@ -3,6 +3,8 @@
  https://github.com/jenkins-infra/pipeline-library/
 */
 
+parallel {
+
 infra.ensureInNode('docker-windows') {
   stage("Install Git Bash") {
     bat 'choco install git.portable -v -d -y -f'
@@ -11,7 +13,8 @@ infra.ensureInNode('docker-windows') {
 
   stage("Install Node.js") {
     bat 'choco install nodejs-lts -v -d -y -f'
-    bat '"C:\\Program Files\\nodejs\\node.exe" --version'
+    bat 'dir "C:\\Program Files"'
+    bat 'dir "C:\\Program Files (x86)"'
   }
 
   withEnv(["Path=C:\\Program Files\\nodejs;${env.PATH}"]) {
@@ -28,3 +31,5 @@ buildPlugin(
   jdkVersions: [11],
   platforms: ['linux']
 )
+
+}
