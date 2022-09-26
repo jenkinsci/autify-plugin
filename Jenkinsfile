@@ -3,7 +3,6 @@
  https://github.com/jenkins-infra/pipeline-library/
 */
 
-pipeline {
   stages {
     parallel {
 
@@ -36,5 +35,3 @@ buildPlugin(
 
     }
   }
-}
-
