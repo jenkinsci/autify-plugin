@@ -4,7 +4,6 @@
 */
 
 infra.ensureInNode('docker-windows') {
-  tool(name: "nodejs")
   stage("Install git-windows") {
     environment {
       PATH = ".\\PortableGit\\bin;${env.PATH}"
