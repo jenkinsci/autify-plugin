@@ -29,9 +29,7 @@ infra.ensureInNode('docker-windows') {
 
 */
 
-tools {
-  nodejs "node"
-}
+tool(name: "nodejs")
 
 buildPlugin(
   useContainerAgent: true,
