@@ -194,15 +194,15 @@
                         <goals>
                             <goal>exec</goal>
                         </goals>
+                        <configuration>
+                            <executable>bash</executable>
+                            <arguments>
+                                <argument>${basedir}/integration-test/java-integration-test.bash</argument>
+                            <argument>${basedir}/target/autify.hpi</argument>
+                            </arguments>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <executable>bash</executable>
-                    <arguments>
-                        <argument>${basedir}/integration-test/java-integration-test.bash</argument>
-                        <argument>${basedir}/target/autify.hpi</argument>
-                    </arguments>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.github.eirslett</groupId>
