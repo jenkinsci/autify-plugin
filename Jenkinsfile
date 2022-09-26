@@ -16,7 +16,7 @@ infra.ensureInNode('docker-windows') {
     //bat 'SETX PATH \"%cd%\\PortableGit\\bin;%PATH%\"'
     //bat 'SET PATH=\"%cd%\\PortableGit\\bin;%PATH%\"'
     //bat 'ECHO %PATH%'
-    bat 'choco install git.portable'
+    bat 'choco install git.portable -y'
   }
   stage("Verify bash.exe") {
     bat 'SET'
