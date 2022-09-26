@@ -28,10 +28,13 @@ infra.ensureInNode('docker-windows') {
 }
 
 */
-nodejs(nodeJSInstallationName: 'Node 16.x') {
+
+tools {
+  nodejs "node"
+}
+
 buildPlugin(
   useContainerAgent: true,
   jdkVersions: [11],
   platforms: ['docker-windows']
 )
-}
