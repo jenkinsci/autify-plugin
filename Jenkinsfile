@@ -8,6 +8,7 @@ infra.ensureInNode('docker-windows') {
     bat 'choco install git -v -d -y -f --params="/GitAndUnixToolsOnPath" --install-arguments="/DIR=C:\\tools\\git"'
     withEnv(["FOO=bar"]) {
       bat 'SET'
+      pwsh 'SET'
     }
     bat '"C:\\tools\\git\\bin\\bash.exe" --version'
     bat 'bash.exe --version'
