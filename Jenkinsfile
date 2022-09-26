@@ -21,7 +21,6 @@ infra.ensureInNode('docker-windows') {
   stage("Verify bash.exe") {
     bat 'SET'
     bat 'ECHO %PATH%'
-    bat '%cd%\\PortableGit\\bin\\bash.exe --version'
     bat 'bash.exe --version'
   }
 }
