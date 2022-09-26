@@ -129,6 +129,19 @@
                 <version>3.1.0</version>
                 <executions>
                     <execution>
+                        <id>validate-bash</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>bash</executable>
+                            <arguments>
+                                <argument>--version</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>integration-test</id>
                         <phase>integration-test</phase>
                         <goals>
@@ -138,7 +151,7 @@
                             <executable>bash</executable>
                             <arguments>
                                 <argument>${basedir}/integration-test/java-integration-test.bash</argument>
-                            <argument>${basedir}/target/autify.hpi</argument>
+                                <argument>${basedir}/target/autify.hpi</argument>
                             </arguments>
                         </configuration>
                     </execution>
