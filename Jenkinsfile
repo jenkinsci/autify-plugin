@@ -9,14 +9,10 @@ infra.ensureInNode('docker-windows') {
     bat 'bash.exe --version'
   }
 
-  stage("env") {
-    environment {
-      Path = "foo;${env.PATH}"
-    }
-
-    bat 'ECHO %PATH%'
+  stage("Install Node.js") {
+    bat 'choco install nodejs-lts -v -d -y -f --installArguments="INSTALLDIR=\"C:\\tools\\nodejs\""'
+    bat 'C:\\tools\\nodejs\\bin\\node.exe --version'
   }
-}
 
 buildPlugin(
   useContainerAgent: true,
