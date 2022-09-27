@@ -54,6 +54,7 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
     private String os;
     private String osVersion;
     private String autifyConnect;
+    private boolean autifyConnectClient;
     private String autifyPath;
     private String shellInstallerUrl;
 
@@ -161,6 +162,15 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
         this.autifyConnect = value;
     }
 
+    public boolean isAutifyConnectClient() {
+        return autifyConnectClient;
+    }
+
+    @DataBoundSetter
+    public void setAutifyConnectClient(@CheckForNull boolean value) {
+        this.autifyConnectClient = value;
+    }
+
     public String getAutifyPath() {
         return StringUtils.trimToEmpty(autifyPath);
     }
@@ -198,7 +208,7 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
         }
         autifyCli.webAuthLogin(webAccessToken);
         if (autifyCli.webTestRun(autifyUrl, wait, timeout, urlReplacements, testExecutionName, browser, device,
-                deviceType, os, osVersion, autifyConnect) != 0) {
+                deviceType, os, osVersion, autifyConnect, autifyConnectClient) != 0) {
             listener.getLogger().println("Failed to execute autify web test run");
             run.setResult(Result.FAILURE);
             return;
@@ -281,6 +291,10 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
             return FormValidation.ok();
         }
 
+        private FormValidation checkEffectiveOnlyForTestScenarioUrl(boolean value, String autifyUrl) {
+            return checkEffectiveOnlyForTestScenarioUrl(value ? "true" : "", autifyUrl);
+        }
+
         private FormValidation checkEffectiveOnlyForTestScenarioUrl(String value, String autifyUrl) {
             if (StringUtils.isNotBlank(value) && !isTestScenarioUrl(autifyUrl)) {
                 return FormValidation.warning(Messages.AutifyWebBuilder_EffectiveOnlyForTestScenarioUrl());
@@ -313,6 +327,13 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
         }
 
         public FormValidation doCheckAutifyConnect(@QueryParameter String value, @QueryParameter String autifyUrl) {
+            return checkEffectiveOnlyForTestScenarioUrl(value, autifyUrl);
+        }
+
+        public FormValidation doCheckAutifyConnectClient(@QueryParameter boolean value,
+                @QueryParameter String autifyUrl, @QueryParameter boolean wait) {
+            if (value && !wait)
+                return FormValidation.error(Messages.AutifyWebBuilder_WaitMustBeChecked());
             return checkEffectiveOnlyForTestScenarioUrl(value, autifyUrl);
         }
 
