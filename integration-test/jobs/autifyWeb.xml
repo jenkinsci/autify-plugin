@@ -15,12 +15,14 @@
       <credentialsId>autifyWebAccessToken</credentialsId>
       <autifyUrl>https://app.autify.com/projects/000/scenarios/0000</autifyUrl>
       <autifyPath>autify-with-proxy</autifyPath>
+      <shellInstallerUrl><!--SHELL_INSTALLER_URL--></shellInstallerUrl>
     </io.jenkins.plugins.autify.AutifyWebBuilder>
     <io.jenkins.plugins.autify.AutifyWebBuilder plugin="autify">
       <credentialsId>autifyWebAccessToken</credentialsId>
       <autifyUrl>https://app.autify.com/projects/000/scenarios/0000</autifyUrl>
       <wait>true</wait>
       <autifyPath>autify-with-proxy</autifyPath>
+      <shellInstallerUrl><!--SHELL_INSTALLER_URL--></shellInstallerUrl>
     </io.jenkins.plugins.autify.AutifyWebBuilder>
   </builders>
   <publishers/>

@@ -1,0 +1,14 @@
+name: 'Nightly test'
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  beta:
+    uses: ./.github/workflows/integration-test.yml
+    with:
+      shell-installer-url: https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/beta/install-cicd.bash
+
+  stable:
+    uses: ./.github/workflows/integration-test.yml

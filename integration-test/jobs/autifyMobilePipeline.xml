@@ -11,10 +11,33 @@ pipeline {
   stages {
     stage('Test') {
       steps {
-        autifyMobile buildId: 'AAA', autifyPath: 'autify-with-proxy', autifyUrl: 'https://mobile-app.autify.com/projects/AAA/test_plans/BBB', credentialsId: 'autifyMobileAccessToken'
-        autifyMobile buildId: 'AAA', wait: true, autifyPath: 'autify-with-proxy', autifyUrl: 'https://mobile-app.autify.com/projects/AAA/test_plans/BBB', credentialsId: 'autifyMobileAccessToken'
-        autifyMobile buildPath: './android.apk', wait: true, autifyPath: 'autify-with-proxy', autifyUrl: 'https://mobile-app.autify.com/projects/AAA/test_plans/BBB', credentialsId: 'autifyMobileAccessToken'
-        autifyMobile buildPath: './ios.app', wait: true, autifyPath: 'autify-with-proxy', autifyUrl: 'https://mobile-app.autify.com/projects/AAA/test_plans/BBB', credentialsId: 'autifyMobileAccessToken'
+        autifyMobile \
+          autifyPath: 'autify-with-proxy', \
+          shellInstallerUrl: '<!--SHELL_INSTALLER_URL-->', \
+          credentialsId: 'autifyMobileAccessToken', \
+          buildId: 'AAA', \
+          autifyUrl: 'https://mobile-app.autify.com/projects/AAA/test_plans/BBB'
+        autifyMobile \
+          autifyPath: 'autify-with-proxy', \
+          shellInstallerUrl: '<!--SHELL_INSTALLER_URL-->', \
+          credentialsId: 'autifyMobileAccessToken', \
+          buildId: 'AAA', \
+          wait: true, \
+          autifyUrl: 'https://mobile-app.autify.com/projects/AAA/test_plans/BBB'
+        autifyMobile \
+          autifyPath: 'autify-with-proxy', \
+          shellInstallerUrl: '<!--SHELL_INSTALLER_URL-->', \
+          credentialsId: 'autifyMobileAccessToken', \
+          buildPath: './android.apk', \
+          wait: true, \
+          autifyUrl: 'https://mobile-app.autify.com/projects/AAA/test_plans/BBB'
+        autifyMobile \
+          autifyPath: 'autify-with-proxy', \
+          shellInstallerUrl: '<!--SHELL_INSTALLER_URL-->', \
+          credentialsId: 'autifyMobileAccessToken', \
+          buildPath: './ios.app', \
+          wait: true, \
+          autifyUrl: 'https://mobile-app.autify.com/projects/AAA/test_plans/BBB'
       }
     }
   }

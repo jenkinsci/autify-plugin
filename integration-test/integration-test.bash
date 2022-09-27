@@ -67,7 +67,8 @@ function setup() {
 function test-job() {
   local job=$1
   jenkins-cli delete-job integration-test || true
-  jenkins-cli create-job integration-test < "$SCRIPT_DIR/jobs/$job.xml"
+  sed "s|<!--SHELL_INSTALLER_URL-->|$INPUT_SHELL_INSTALLER_URL|g" "$SCRIPT_DIR/jobs/$job.xml" | \
+  jenkins-cli create-job integration-test
   jenkins-cli build integration-test -s -v
 }
 

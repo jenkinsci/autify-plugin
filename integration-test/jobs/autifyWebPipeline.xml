@@ -11,8 +11,17 @@ pipeline {
   stages {
     stage('Test') {
       steps {
-        autifyWeb autifyPath: 'autify-with-proxy', autifyUrl: 'https://app.autify.com/projects/000/scenarios/0000', credentialsId: 'autifyWebAccessToken'
-        autifyWeb autifyPath: 'autify-with-proxy', autifyUrl: 'https://app.autify.com/projects/000/scenarios/0000', credentialsId: 'autifyWebAccessToken', wait: true
+        autifyWeb \
+          autifyPath: 'autify-with-proxy', \
+          shellInstallerUrl: '<!--SHELL_INSTALLER_URL-->', \
+          credentialsId: 'autifyWebAccessToken', \
+          autifyUrl: 'https://app.autify.com/projects/000/scenarios/0000'
+        autifyWeb \
+          autifyPath: 'autify-with-proxy', \
+          shellInstallerUrl: '<!--SHELL_INSTALLER_URL-->', \
+          credentialsId: 'autifyWebAccessToken', \
+          autifyUrl: 'https://app.autify.com/projects/000/scenarios/0000', \
+          wait: true
       }
     }
   }
