@@ -16,12 +16,14 @@
       <workspaceId>AAA</workspaceId>
       <buildPath>./android.apk</buildPath>
       <autifyPath>autify-with-proxy</autifyPath>
+      <shellInstallerUrl><!--SHELL_INSTALLER_URL--></shellInstallerUrl>
     </io.jenkins.plugins.autify.AutifyMobileUploadBuilder>
     <io.jenkins.plugins.autify.AutifyMobileUploadBuilder plugin="autify">
       <credentialsId>autifyMobileAccessToken</credentialsId>
       <workspaceId>AAA</workspaceId>
       <buildPath>./ios.app</buildPath>
       <autifyPath>autify-with-proxy</autifyPath>
+      <shellInstallerUrl><!--SHELL_INSTALLER_URL--></shellInstallerUrl>
     </io.jenkins.plugins.autify.AutifyMobileUploadBuilder>
   </builders>
   <publishers/>

@@ -11,8 +11,18 @@ pipeline {
   stages {
     stage('Test') {
       steps {
-        autifyMobileUpload autifyPath: 'autify-with-proxy', credentialsId: 'autifyMobileAccessToken', workspaceId: 'AAA', buildPath: './android.apk' 
-        autifyMobileUpload autifyPath: 'autify-with-proxy', credentialsId: 'autifyMobileAccessToken', workspaceId: 'AAA', buildPath: './ios.app' 
+        autifyMobileUpload \
+          autifyPath: 'autify-with-proxy', \
+          shellInstallerUrl: '<!--SHELL_INSTALLER_URL-->', \
+          credentialsId: 'autifyMobileAccessToken', \
+          workspaceId: 'AAA', \
+          buildPath: './android.apk' 
+        autifyMobileUpload \
+          autifyPath: 'autify-with-proxy', \
+          shellInstallerUrl: '<!--SHELL_INSTALLER_URL-->', \
+          credentialsId: 'autifyMobileAccessToken', \
+          workspaceId: 'AAA', \
+          buildPath: './ios.app' 
       }
     }
   }

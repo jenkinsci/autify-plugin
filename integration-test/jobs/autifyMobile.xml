@@ -16,6 +16,7 @@
       <autifyUrl>https://mobile-app.autify.com/projects/AAA/test_plans/BBB</autifyUrl>
       <buildId>AAA</buildId>
       <autifyPath>autify-with-proxy</autifyPath>
+      <shellInstallerUrl><!--SHELL_INSTALLER_URL--></shellInstallerUrl>
     </io.jenkins.plugins.autify.AutifyMobileBuilder>
     <io.jenkins.plugins.autify.AutifyMobileBuilder plugin="autify">
       <credentialsId>autifyMobileAccessToken</credentialsId>
@@ -23,6 +24,7 @@
       <buildId>AAA</buildId>
       <wait>true</wait>
       <autifyPath>autify-with-proxy</autifyPath>
+      <shellInstallerUrl><!--SHELL_INSTALLER_URL--></shellInstallerUrl>
     </io.jenkins.plugins.autify.AutifyMobileBuilder>
     <io.jenkins.plugins.autify.AutifyMobileBuilder plugin="autify">
       <credentialsId>autifyMobileAccessToken</credentialsId>
@@ -30,6 +32,7 @@
       <buildPath>./android.apk</buildPath>
       <wait>true</wait>
       <autifyPath>autify-with-proxy</autifyPath>
+      <shellInstallerUrl><!--SHELL_INSTALLER_URL--></shellInstallerUrl>
     </io.jenkins.plugins.autify.AutifyMobileBuilder>
     <io.jenkins.plugins.autify.AutifyMobileBuilder plugin="autify">
       <credentialsId>autifyMobileAccessToken</credentialsId>
@@ -37,6 +40,7 @@
       <buildPath>./ios.app</buildPath>
       <wait>true</wait>
       <autifyPath>autify-with-proxy</autifyPath>
+      <shellInstallerUrl><!--SHELL_INSTALLER_URL--></shellInstallerUrl>
     </io.jenkins.plugins.autify.AutifyMobileBuilder>
   </builders>
   <publishers/>
