@@ -22,6 +22,13 @@ pipeline {
           credentialsId: 'autifyWebAccessToken', \
           autifyUrl: 'https://app.autify.com/projects/000/scenarios/0000', \
           wait: true
+        autifyWeb \
+          autifyPath: 'autify-with-proxy', \
+          shellInstallerUrl: '<!--SHELL_INSTALLER_URL-->', \
+          credentialsId: 'autifyWebAccessToken', \
+          autifyUrl: 'https://app.autify.com/projects/000/scenarios/0000', \
+          wait: true, \
+          autifyConnectClient: true
       }
     }
   }

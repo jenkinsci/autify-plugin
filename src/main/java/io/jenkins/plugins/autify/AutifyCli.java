@@ -53,7 +53,7 @@ public class AutifyCli {
 
     public int webTestRun(String autifyUrl, boolean wait, String timeout, List<UrlReplacement> urlReplacements,
             String testExecutionName, String browser, String device, String deviceType, String os, String osVersion,
-            String autifyConnect) {
+            String autifyConnect, boolean autifyConnectClient) {
         Builder builder = new Builder("web", "test", "run");
         builder.add(autifyUrl);
         builder.addFlag("--wait", wait);
@@ -70,6 +70,16 @@ public class AutifyCli {
         builder.addFlag("--os", os);
         builder.addFlag("--os-version", osVersion);
         builder.addFlag("--autify-connect", autifyConnect);
+        if (autifyConnectClient && !wait) {
+            logger.println("Wait option must be set when running with Autify Connect Client.");
+            return 1;
+        } else {
+            if (execute(new Builder("connect", "client", "install")) != 0) {
+                logger.println("Failed to install Autify Connect Client.");
+                return 1;
+            }
+        }
+        builder.addFlag("--autify-connect-client", autifyConnectClient);
         return execute(builder);
     }
 

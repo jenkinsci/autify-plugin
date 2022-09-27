@@ -37,5 +37,8 @@
         <f:entry title="${%AutifyConnect}" field="autifyConnect">
             <f:textbox placeholder="your-autify-connect-access-point"/>
         </f:entry>
+        <f:entry title="${%AutifyConnectClient}" field="autifyConnectClient">
+            <f:checkbox />
+        </f:entry>
     </f:advanced>
 </j:jelly>
