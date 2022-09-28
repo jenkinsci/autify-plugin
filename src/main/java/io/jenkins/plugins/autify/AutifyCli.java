@@ -70,16 +70,17 @@ public class AutifyCli {
         builder.addFlag("--os", os);
         builder.addFlag("--os-version", osVersion);
         builder.addFlag("--autify-connect", autifyConnect);
-        if (autifyConnectClient && !wait) {
-            logger.println("Wait option must be set when running with Autify Connect Client.");
-            return 1;
-        } else {
+        if (autifyConnectClient) {
+            if (!wait) {
+                logger.println("Wait option must be set when running with Autify Connect Client.");
+                return 1;
+            }
             if (execute(new Builder("connect", "client", "install")) != 0) {
                 logger.println("Failed to install Autify Connect Client.");
                 return 1;
             }
+            builder.addFlag("--autify-connect-client", autifyConnectClient);
         }
-        builder.addFlag("--autify-connect-client", autifyConnectClient);
         return execute(builder);
     }
 

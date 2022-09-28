@@ -284,15 +284,18 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
             return TEST_PLAN_URL_PATTERN.matcher(value).find();
         }
 
+        public FormValidation doCheckWait(@QueryParameter boolean value, @QueryParameter boolean autifyConnectClient) {
+            if (autifyConnectClient && !value)
+                return FormValidation
+                        .error(Messages.AutifyWebBuilder_WaitMustBeCheckedWhenAutifyConnectClientIsEnabled());
+            return FormValidation.ok();
+        }
+
         public FormValidation doCheckTimeout(@QueryParameter String value, @QueryParameter boolean wait) {
             if (StringUtils.isNotBlank(value) && !wait) {
                 return FormValidation.warning(Messages.AutifyWebBuilder_NoEffectWhenWaitIsUnchecked());
             }
             return FormValidation.ok();
-        }
-
-        private FormValidation checkEffectiveOnlyForTestScenarioUrl(boolean value, String autifyUrl) {
-            return checkEffectiveOnlyForTestScenarioUrl(value ? "true" : "", autifyUrl);
         }
 
         private FormValidation checkEffectiveOnlyForTestScenarioUrl(String value, String autifyUrl) {
@@ -326,15 +329,25 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
             return checkEffectiveOnlyForTestScenarioUrl(value, autifyUrl);
         }
 
-        public FormValidation doCheckAutifyConnect(@QueryParameter String value, @QueryParameter String autifyUrl) {
-            return checkEffectiveOnlyForTestScenarioUrl(value, autifyUrl);
+        public FormValidation doCheckAutifyConnect(@QueryParameter String value,
+                @QueryParameter boolean autifyConnectClient) {
+            if (StringUtils.isNotEmpty(value) && autifyConnectClient)
+                return FormValidation
+                        .error(Messages
+                                .AutifyWebBuilder_CannotSpecifyBothAutifyConnectAccessPointAndAutifyConnectClient());
+            return FormValidation.ok();
         }
 
-        public FormValidation doCheckAutifyConnectClient(@QueryParameter boolean value,
-                @QueryParameter String autifyUrl, @QueryParameter boolean wait) {
+        public FormValidation doCheckAutifyConnectClient(@QueryParameter boolean value, @QueryParameter boolean wait,
+                @QueryParameter String autifyConnect) {
             if (value && !wait)
-                return FormValidation.error(Messages.AutifyWebBuilder_WaitMustBeChecked());
-            return checkEffectiveOnlyForTestScenarioUrl(value, autifyUrl);
+                return FormValidation
+                        .error(Messages.AutifyWebBuilder_WaitMustBeCheckedWhenAutifyConnectClientIsEnabled());
+            if (value && StringUtils.isNotEmpty(autifyConnect))
+                return FormValidation
+                        .error(Messages
+                                .AutifyWebBuilder_CannotSpecifyBothAutifyConnectAccessPointAndAutifyConnectClient());
+            return FormValidation.ok();
         }
 
         @Override
