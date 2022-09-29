@@ -39,6 +39,8 @@ import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 
 public class AutifyMobileUploadBuilder extends Builder implements SimpleBuildStep {
 
+    private final static String userAgentSuffix = "jenkins-plugin-autifyMobileUpload";
+
     private final String credentialsId;
     private final String workspaceId;
     private final String buildPath;
@@ -93,7 +95,8 @@ public class AutifyMobileUploadBuilder extends Builder implements SimpleBuildSte
             return;
         }
         String mobileAccessToken = Secret.toString(credentials.getSecret());
-        AutifyCli autifyCli = new AutifyCli(workspace, launcher, listener, autifyPath, shellInstallerUrl);
+        AutifyCli autifyCli = new AutifyCli(workspace, launcher, listener, autifyPath, shellInstallerUrl,
+                userAgentSuffix);
         if (autifyCli.install() != 0) {
             listener.getLogger().println("Failed to install autify-cli");
             run.setResult(Result.FAILURE);
