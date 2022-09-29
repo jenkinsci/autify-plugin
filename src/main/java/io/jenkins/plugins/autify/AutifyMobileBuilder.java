@@ -40,6 +40,8 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 public class AutifyMobileBuilder extends Builder implements SimpleBuildStep {
 
+    private final static String userAgentSuffix = "jenkins-plugin-autifyMobile";
+
     private final String credentialsId;
     private final String autifyUrl;
     private String buildId;
@@ -128,7 +130,8 @@ public class AutifyMobileBuilder extends Builder implements SimpleBuildStep {
             return;
         }
         String mobileAccessToken = Secret.toString(credentials.getSecret());
-        AutifyCli autifyCli = new AutifyCli(workspace, launcher, listener, autifyPath, shellInstallerUrl);
+        AutifyCli autifyCli = new AutifyCli(workspace, launcher, listener, autifyPath, shellInstallerUrl,
+                userAgentSuffix);
         if (autifyCli.install() != 0) {
             listener.getLogger().println("Failed to install autify-cli");
             run.setResult(Result.FAILURE);

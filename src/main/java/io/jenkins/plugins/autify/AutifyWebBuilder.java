@@ -42,6 +42,8 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
 
+    private final static String userAgentSuffix = "jenkins-plugin-autifyWeb";
+
     private final String credentialsId;
     private final String autifyUrl;
     private boolean wait;
@@ -200,7 +202,8 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
             return;
         }
         String webAccessToken = Secret.toString(credentials.getSecret());
-        AutifyCli autifyCli = new AutifyCli(workspace, launcher, listener, autifyPath, shellInstallerUrl);
+        AutifyCli autifyCli = new AutifyCli(workspace, launcher, listener, autifyPath, shellInstallerUrl,
+                userAgentSuffix);
         if (autifyCli.install() != 0) {
             listener.getLogger().println("Failed to install autify-cli");
             run.setResult(Result.FAILURE);

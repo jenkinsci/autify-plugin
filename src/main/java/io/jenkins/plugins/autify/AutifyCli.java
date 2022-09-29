@@ -27,16 +27,18 @@ public class AutifyCli {
     private final PrintStream logger;
     private final String autifyPath;
     private final String shellInstallerUrl;
+    private final String userAgentSuffix;
     private String webAccessToken = "";
     private String mobileAccessToken = "";
 
     public AutifyCli(FilePath workspace, Launcher launcher, TaskListener listener, String autifyPath,
-            String shellInstallerUrl) {
+            String shellInstallerUrl, String userAgentSuffix) {
         this.workspace = workspace;
         this.launcher = launcher;
         this.logger = listener.getLogger();
         this.autifyPath = StringUtils.isEmpty(autifyPath) ? "autify" : autifyPath;
         this.shellInstallerUrl = StringUtils.isEmpty(shellInstallerUrl) ? INSTALL_SCRIPT_URL : shellInstallerUrl;
+        this.userAgentSuffix = StringUtils.trimToEmpty(userAgentSuffix);
     }
 
     public int install() {
@@ -142,6 +144,7 @@ public class AutifyCli {
 
     private Map<String, String> getEnvs() {
         Map<String, String> envs = new HashMap<>(System.getenv());
+        envs.putIfAbsent("AUTIFY_CLI_USER_AGENT_SUFFIX", userAgentSuffix);
         envs.put("AUTIFY_CLI_INSTALL_USE_CACHE", "1");
         envs.put("AUTIFY_WEB_ACCESS_TOKEN", webAccessToken);
         envs.put("AUTIFY_MOBILE_ACCESS_TOKEN", mobileAccessToken);
