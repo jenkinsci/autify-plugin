@@ -35,7 +35,7 @@ function exit-handler() {
 trap exit-handler EXIT
 
 function jenkins-plugin-cli() {
-  java -jar "$TARGET_TMP_DIR/jenkins-plugin-manager.jar" --verbose --war jenkins.war --plugin-download-directory "$JENKINS_PLUGINS_DIR" "$@"
+  java -jar "$TARGET_TMP_DIR/jenkins-plugin-manager.jar" --verbose --war "$TARGET_TMP_DIR/jenkins.war" --plugin-download-directory "$JENKINS_PLUGINS_DIR" "$@"
 }
 
 function jenkins-cli() {
