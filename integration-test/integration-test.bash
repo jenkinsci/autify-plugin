@@ -13,7 +13,9 @@ export AUTIFY_TEST_WAIT_INTERVAL_SECOND=0
 export AUTIFY_CONNECT_CLIENT_MODE=fake
 
 JENKINS_PLUGINS_DIR="$JENKINS_HOME/plugins"
-JENKINS_WAR_URL="https://get.jenkins.io/war-stable/2.361.1/jenkins.war"
+# The latest version can be found here: https://www.jenkins.io/download/
+JENKINS_WAR_URL="https://get.jenkins.io/war/2.373/jenkins.war"
+# The latest version can be found here: https://github.com/jenkinsci/plugin-installation-manager-tool/releases
 JENKINS_PLUGIN_CLI_JAR_URL="https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/2.12.9/jenkins-plugin-manager-2.12.9.jar"
 
 JENKINS_PID=
