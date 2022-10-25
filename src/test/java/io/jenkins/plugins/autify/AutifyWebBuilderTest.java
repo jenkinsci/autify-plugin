@@ -51,6 +51,7 @@ public class AutifyWebBuilderTest {
             .add("--os-version", stub)
             .add("--autify-connect", stub)
             .add("--autify-connect-client")
+            .add("--autify-connect-client-extra-arguments", stub)
             .toString() + "\n";
 
     AutifyWebBuilder builder;
@@ -91,6 +92,7 @@ public class AutifyWebBuilderTest {
         builder.setOsVersion(stub);
         builder.setAutifyConnect(stub);
         builder.setAutifyConnectClient(true);
+        builder.setAutifyConnectClientExtraArguments(stub);
         project.getBuildersList().add(builder);
         project = jenkins.configRoundtrip(project);
 
@@ -106,6 +108,7 @@ public class AutifyWebBuilderTest {
         lhs.setOsVersion(stub);
         lhs.setAutifyConnect(stub);
         lhs.setAutifyConnectClient(true);
+        lhs.setAutifyConnectClientExtraArguments(stub);
         jenkins.assertEqualDataBoundBeans(lhs, project.getBuildersList().get(0));
     }
 
@@ -131,6 +134,7 @@ public class AutifyWebBuilderTest {
         builder.setOsVersion(stub);
         builder.setAutifyConnect(stub);
         builder.setAutifyConnectClient(true);
+        builder.setAutifyConnectClientExtraArguments(stub);
         project.getBuildersList().add(builder);
         FreeStyleBuild build = jenkins.buildAndAssertSuccess(project);
         jenkins.assertLogContains(webTestRunFullCommand, build);
@@ -173,6 +177,7 @@ public class AutifyWebBuilderTest {
                 + "  osVersion: '" + stub + "', "
                 + "  autifyConnect: '" + stub + "', "
                 + "  autifyConnectClient: true, "
+                + "  autifyConnectClientExtraArguments: '" + stub + "', "
                 + "  shellInstallerUrl: '" + shellInstallerUrl + "'\n"
                 + "}";
         job.setDefinition(new CpsFlowDefinition(pipelineScript, true));

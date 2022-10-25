@@ -40,5 +40,8 @@
         <f:entry title="${%AutifyConnectClient}" field="autifyConnectClient">
             <f:checkbox />
         </f:entry>
+        <f:entry title="${%AutifyConnectClientExtraArguments}" field="autifyConnectClientExtraArguments">
+            <f:textbox placeholder="--experimental-tunnel-proxy http://proxy"/>
+        </f:entry>
     </f:advanced>
 </j:jelly>
