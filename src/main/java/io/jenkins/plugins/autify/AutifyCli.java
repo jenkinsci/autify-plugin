@@ -55,7 +55,7 @@ public class AutifyCli {
 
     public int webTestRun(String autifyUrl, boolean wait, String timeout, List<UrlReplacement> urlReplacements,
             String testExecutionName, String browser, String device, String deviceType, String os, String osVersion,
-            String autifyConnect, boolean autifyConnectClient) {
+            String autifyConnect, boolean autifyConnectClient, String autifyConnectClientExtraArguments) {
         Builder builder = new Builder("web", "test", "run");
         builder.add(autifyUrl);
         builder.addFlag("--wait", wait);
@@ -82,6 +82,7 @@ public class AutifyCli {
                 return 1;
             }
             builder.addFlag("--autify-connect-client", autifyConnectClient);
+            builder.addFlag("--autify-connect-client-extra-arguments", autifyConnectClientExtraArguments);
         }
         return execute(builder);
     }

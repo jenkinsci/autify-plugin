@@ -57,6 +57,7 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
     private String osVersion;
     private String autifyConnect;
     private boolean autifyConnectClient;
+    private String autifyConnectClientExtraArguments;
     private String autifyPath;
     private String shellInstallerUrl;
 
@@ -173,6 +174,15 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
         this.autifyConnectClient = value;
     }
 
+    public String getAutifyConnectClientExtraArguments() {
+        return StringUtils.trimToEmpty(autifyConnectClientExtraArguments);
+    }
+
+    @DataBoundSetter
+    public void setAutifyConnectClientExtraArguments(@CheckForNull String value) {
+        this.autifyConnectClientExtraArguments = value;
+    }
+
     public String getAutifyPath() {
         return StringUtils.trimToEmpty(autifyPath);
     }
@@ -211,7 +221,8 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
         }
         autifyCli.webAuthLogin(webAccessToken);
         if (autifyCli.webTestRun(autifyUrl, wait, timeout, urlReplacements, testExecutionName, browser, device,
-                deviceType, os, osVersion, autifyConnect, autifyConnectClient) != 0) {
+                deviceType, os, osVersion, autifyConnect, autifyConnectClient,
+                autifyConnectClientExtraArguments) != 0) {
             listener.getLogger().println("Failed to execute autify web test run");
             run.setResult(Result.FAILURE);
             return;
