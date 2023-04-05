@@ -20,7 +20,7 @@ import io.jenkins.plugins.autify.model.UrlReplacement;
 
 public class AutifyCli {
 
-    static final String INSTALL_SCRIPT_URL = "https://raw.githubusercontent.com/jenkinsci/autify-plugin/a5c397ece63043b6a6c56f04e646c8be420d3711/install-cicd.bash";
+    static final String INSTALL_SCRIPT_URL = "https://raw.githubusercontent.com/jenkinsci/autify-plugin/mtsmfm/check-ci/install-cicd.bash";
 
     private final FilePath workspace;
     private final Launcher launcher;
