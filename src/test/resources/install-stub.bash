@@ -8,9 +8,4 @@ echo "\$@"
 EOS
 chmod +x "$DIR/autify/bin/autify"
 
-cat << EOS > "$DIR/autify/bin/autify.cmd"
-@ECHO OFF
-ECHO %*
-EOS
-
 echo "$DIR/autify/bin" >> "$DIR/autify/path"
