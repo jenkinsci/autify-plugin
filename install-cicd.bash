@@ -51,7 +51,7 @@ if [ "$OS" == "windows" ]; then
   EXE_FILE="$AUTIFY_DIR/installer.exe"
   curl "$URL" > "$EXE_FILE"
   cd "$AUTIFY_DIR"
-  cmd.exe /C "./installer.exe /S"
+  cmd.exe /C "installer.exe /S /D=$(cygpath -w $AUTIFY_DIR)"
   ls -la
   cd -
 else
