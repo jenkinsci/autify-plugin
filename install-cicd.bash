@@ -52,7 +52,7 @@ if [ "$OS" == "windows" ]; then
   curl "$URL" > "$EXE_FILE"
   FOO="$(cygpath -w $EXE_FILE)"
   BAR="$(cygpath -w $AUTIFY_DIR)"
-  cmd.exe /C "'$FOO' /S /D='$BAR'"
+  cmd.exe /C """$FOO"" /S /D=""$BAR"""
 else
   mkdir "$AUTIFY_DIR/bin"
   mkdir "$AUTIFY_DIR/lib"
