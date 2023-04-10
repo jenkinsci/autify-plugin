@@ -50,10 +50,7 @@ if [ "$OS" == "windows" ]; then
   echo "Installing CLI from $URL"
   EXE_FILE="$AUTIFY_DIR/installer.exe"
   curl "$URL" > "$EXE_FILE"
-  cd "$AUTIFY_DIR"
-  cmd.exe /C "installer.exe /S /D=$(cygpath -w $AUTIFY_DIR)"
-  ls -la
-  cd -
+  cmd.exe /C "$(cygpath -w "$EXE_FILE") /S /D=$(cygpath -w "$AUTIFY_DIR")"
 else
   mkdir "$AUTIFY_DIR/bin"
   mkdir "$AUTIFY_DIR/lib"
