@@ -53,6 +53,7 @@ if [ "$OS" == "windows" ]; then
   FOO="$(cygpath -w $EXE_FILE)"
   BAR="$(cygpath -w $AUTIFY_DIR)"
   $FOO /S /D=$BAR
+  $EXE_FILE /S /D=$AUTIFY_DIR
 else
   mkdir "$AUTIFY_DIR/bin"
   mkdir "$AUTIFY_DIR/lib"
