@@ -52,6 +52,7 @@ if [ "$OS" == "windows" ]; then
   curl "$URL" > "$EXE_FILE"
   cd "$AUTIFY_DIR"
   cmd.exe /C "./installer.exe /S /D=."
+  ls -la
   cd -
 else
   mkdir "$AUTIFY_DIR/bin"
