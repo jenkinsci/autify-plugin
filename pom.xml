@@ -121,6 +121,9 @@
                 <configuration>
                     <forkCount>2C</forkCount>
                     <reuseForks>true</reuseForks>
+                    <systemPropertyVariables>
+                        <jenkins.test.noSpaceInTmpDirs>true</jenkins.test.noSpaceInTmpDirs>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>
