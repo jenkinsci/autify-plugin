@@ -19,4 +19,4 @@ jobs:
           mkdir "foo bar"
           cd "foo bar"
           pwd
-          cat install-cicd.bash | bash -xe
+          cat ../install-cicd.bash | bash -xe
