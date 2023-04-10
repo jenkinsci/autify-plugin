@@ -1,17 +1,12 @@
 package io.jenkins.plugins.autify;
 
-import hudson.model.FreeStyleBuild;
-import hudson.model.FreeStyleProject;
-import hudson.model.Label;
-import hudson.util.ArgumentListBuilder;
-import hudson.util.Secret;
-import io.jenkins.plugins.autify.model.UrlReplacement;
-
 import java.io.File;
 import java.io.IOException;
+import java.lang.module.ModuleDescriptor.Version;
 import java.net.MalformedURLException;
 import java.util.Arrays;
 
+import org.apache.commons.lang.SystemUtils;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 import org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
@@ -24,6 +19,13 @@ import org.jvnet.hudson.test.JenkinsRule;
 
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.SystemCredentialsProvider;
+
+import hudson.model.FreeStyleBuild;
+import hudson.model.FreeStyleProject;
+import hudson.model.Label;
+import hudson.util.ArgumentListBuilder;
+import hudson.util.Secret;
+import io.jenkins.plugins.autify.model.UrlReplacement;
 
 public class AutifyWebBuilderTest {
 
@@ -38,11 +40,11 @@ public class AutifyWebBuilderTest {
     final String timeout = "10";
     final UrlReplacement urlReplacement = new UrlReplacement("https://foo.com", "https://bar.com");
     final String stub = "foo";
-    final String webTestRunFullCommand = new ArgumentListBuilder("web", "test", "run")
+    final String baseWebTestRunFullCommand = new ArgumentListBuilder("web", "test", "run")
             .add(autifyUrl)
             .add("--wait")
             .add("--timeout", timeout)
-            .add("--url-replacements", urlReplacement.toCliString())
+            .add("--url-replacements", urlReplacement.toCliString(Version.parse("0.29.0")))
             .add("--name", stub)
             .add("--browser", stub)
             .add("--device", stub)
@@ -53,6 +55,8 @@ public class AutifyWebBuilderTest {
             .add("--autify-connect-client")
             .add("--autify-connect-client-extra-arguments", stub)
             .toString() + "\n";
+    // On Windows surrounded with single quotes
+    final String webTestRunFullCommand = SystemUtils.IS_OS_WINDOWS ? baseWebTestRunFullCommand.replaceAll("\"", "'") : baseWebTestRunFullCommand;
 
     AutifyWebBuilder builder;
 

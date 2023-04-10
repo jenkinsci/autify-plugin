@@ -11,6 +11,8 @@ import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import io.jenkins.plugins.autify.Messages;
 
+import java.lang.module.ModuleDescriptor.Version;
+
 public class UrlReplacement extends AbstractDescribableImpl<UrlReplacement> {
 
     private final String patternUrl;
@@ -30,9 +32,13 @@ public class UrlReplacement extends AbstractDescribableImpl<UrlReplacement> {
         return replacementUrl;
     }
 
-    public String toCliString() {
+    public String toCliString(Version version) {
         if (patternUrl == null || replacementUrl == null) return null;
-        else return patternUrl + "=" + replacementUrl;
+        else if (Version.parse("0.29.0").compareTo((version)) <= 0) {
+            return patternUrl + " " + replacementUrl;
+        } else {
+            return patternUrl + "=" + replacementUrl;
+        }
     }
 
     @Extension

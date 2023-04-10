@@ -1,12 +1,18 @@
 package io.jenkins.plugins.autify;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.lang.module.ModuleDescriptor.Version;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -61,8 +67,12 @@ public class AutifyCli {
         builder.addFlag("--wait", wait);
         builder.addFlag("--timeout", timeout);
         if (urlReplacements != null) {
+            Version version = getVersion();
+            if (version == null) {
+                return 1;
+            }
             for (UrlReplacement urlReplacement : urlReplacements) {
-                builder.addFlag("--url-replacements", urlReplacement.toCliString());
+                builder.addFlag("--url-replacements", urlReplacement.toCliString(version));
             }
         }
         builder.addFlag("--name", testExecutionName);
@@ -121,16 +131,37 @@ public class AutifyCli {
         this.mobileAccessToken = mobileAccessToken;
     }
 
-    private int runCommand(InputStream stdin, ArgumentListBuilder builder) {
-        return runCommand(stdin, builder.toCommandArray());
+    public Version getVersion() {
+        ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+        int result = execute(new Builder("--version"), stdout);
+        if (result == 0) {
+            Pattern pattern = Pattern.compile("@autifyhq/autify-cli/(.*?) ");
+            String stdoutStr = stdout.toString(Charset.defaultCharset());
+            Matcher matcher = pattern.matcher(stdoutStr);
+            if (matcher.find()) {
+                return Version.parse(matcher.group(1));
+            } else {
+                logger.println(String.format("Failed to parse `%s` as version.", result));
+
+                return null;
+            }
+        } else {
+            logger.println("Failed to execute --version command.");
+
+            return null;
+        }
     }
 
-    private int runCommand(InputStream stdin, String... command) {
+    private int runCommand(InputStream stdin, OutputStream stdout, ArgumentListBuilder builder) {
+        return runCommand(stdin, stdout, builder.toCommandArray());
+    }
+
+    private int runCommand(InputStream stdin, OutputStream stdout, String... command) {
         try {
             ProcStarter procStarter = launcher.launch()
                     .pwd(workspace)
                     .envs(getEnvs())
-                    .stdout(logger)
+                    .stdout(stdout)
                     .stderr(logger)
                     .cmds(command);
             if (stdin != null) {
@@ -156,10 +187,14 @@ public class AutifyCli {
     }
 
     private int execute(ArgumentListBuilder builder) {
+        return execute(builder, logger);
+    }
+
+    private int execute(ArgumentListBuilder builder, OutputStream stdout) {
         try {
             InputStream scriptStream = AutifyCli.class
                     .getResourceAsStream("/io/jenkins/plugins/autify/AutifyCli/execute.bash");
-            int ret = runBashScript(scriptStream, builder);
+            int ret = runBashScript(scriptStream, stdout, builder);
             scriptStream.close();
             return ret;
         } catch (IOException e) {
@@ -173,16 +208,20 @@ public class AutifyCli {
     }
 
     private int runBashScript(InputStream scriptStream, ArgumentListBuilder builder) {
+        return runBashScript(scriptStream, logger, builder);
+    }
+
+    private int runBashScript(InputStream scriptStream, OutputStream stdout, ArgumentListBuilder builder) {
         try {
             int ret;
             if (SystemUtils.IS_OS_WINDOWS) {
                 // GitHub Actions windows runner can't recognize `bash` for some reasons.
                 // This is a workaround to call `bash` by passing the command to `cmd.exe`.
                 String command = "bash -xe -s - " + builder.toString();
-                ret = runCommand(scriptStream, "cmd.exe", "/C", command);
+                ret = runCommand(scriptStream, stdout, "cmd.exe", "/C", command);
             } else {
                 builder.prepend("bash", "-xe", "-s", "-");
-                ret = runCommand(scriptStream, builder);
+                ret = runCommand(scriptStream, stdout, builder);
             }
             scriptStream.close();
             return ret;
