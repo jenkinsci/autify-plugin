@@ -32,7 +32,7 @@ public class UrlReplacement extends AbstractDescribableImpl<UrlReplacement> {
 
     public String toCliString() {
         if (patternUrl == null || replacementUrl == null) return null;
-        else return patternUrl + "=" + replacementUrl;
+        else return patternUrl + " " + replacementUrl;
     }
 
     @Extension
