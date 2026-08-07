@@ -33,10 +33,10 @@ import java.util.regex.Pattern;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 
-import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 import org.kohsuke.stapler.DataBoundSetter;
+import hudson.Util;
 
 public class AutifyMobileBuilder extends Builder implements SimpleBuildStep {
 
@@ -66,7 +66,7 @@ public class AutifyMobileBuilder extends Builder implements SimpleBuildStep {
     }
 
     public String getBuildId() {
-        return StringUtils.trimToEmpty(buildId);
+        return Util.fixNull(buildId).trim();
     }
 
     @DataBoundSetter
@@ -75,7 +75,7 @@ public class AutifyMobileBuilder extends Builder implements SimpleBuildStep {
     }
 
     public String getBuildPath() {
-        return StringUtils.trimToEmpty(buildPath);
+        return Util.fixNull(buildPath).trim();
     }
 
     @DataBoundSetter
@@ -93,7 +93,7 @@ public class AutifyMobileBuilder extends Builder implements SimpleBuildStep {
     }
 
     public String getTimeout() {
-        return StringUtils.trimToEmpty(timeout);
+        return Util.fixNull(timeout).trim();
     }
 
     @DataBoundSetter
@@ -102,7 +102,7 @@ public class AutifyMobileBuilder extends Builder implements SimpleBuildStep {
     }
 
     public String getAutifyPath() {
-        return StringUtils.trimToEmpty(autifyPath);
+        return Util.fixNull(autifyPath).trim();
     }
 
     @DataBoundSetter
@@ -111,7 +111,7 @@ public class AutifyMobileBuilder extends Builder implements SimpleBuildStep {
     }
 
     public String getShellInstallerUrl() {
-        return StringUtils.trimToEmpty(shellInstallerUrl);
+        return Util.fixNull(shellInstallerUrl).trim();
     }
 
     @DataBoundSetter
@@ -180,7 +180,7 @@ public class AutifyMobileBuilder extends Builder implements SimpleBuildStep {
                     return FormValidation.ok();
                 }
             }
-            if (StringUtils.isBlank(value)) {
+            if (Util.fixEmptyAndTrim(value) == null) {
                 return FormValidation.error(Messages.AutifyMobileBuilder_CannotBeEmpty());
             }
             if (CredentialsProvider.listCredentials(
@@ -195,7 +195,7 @@ public class AutifyMobileBuilder extends Builder implements SimpleBuildStep {
         }
 
         public FormValidation doCheckAutifyUrl(@QueryParameter String value) {
-            if (StringUtils.isBlank(value)) {
+            if (Util.fixEmptyAndTrim(value) == null) {
                 return FormValidation.error(Messages.AutifyMobileBuilder_CannotBeEmpty());
             }
             if (!isTestPlanUrl(value)) {
@@ -209,27 +209,27 @@ public class AutifyMobileBuilder extends Builder implements SimpleBuildStep {
         }
 
         public FormValidation doCheckBuildId(@QueryParameter String value, @QueryParameter String buildPath) {
-            if (StringUtils.isNotBlank(value) && StringUtils.isNotBlank(buildPath)) {
+            if (Util.fixEmptyAndTrim(value) != null && Util.fixEmptyAndTrim(buildPath) != null) {
                 return FormValidation.error(Messages.AutifyMobileBuilder_CannotSpecifyBothBuildIdAndBuildPath());
             }
-            if (StringUtils.isBlank(value) && StringUtils.isBlank(buildPath)) {
+            if (Util.fixEmptyAndTrim(value) == null && Util.fixEmptyAndTrim(buildPath) == null) {
                 return FormValidation.error(Messages.AutifyMobileBuilder_SpecifyEitherBuildIdOrBuildPath());
             }
             return FormValidation.ok();
         }
 
         public FormValidation doCheckBuildPath(@QueryParameter String value, @QueryParameter String buildId) {
-            if (StringUtils.isNotBlank(value) && StringUtils.isNotBlank(buildId)) {
+            if (Util.fixEmptyAndTrim(value) != null && Util.fixEmptyAndTrim(buildId) != null) {
                 return FormValidation.error(Messages.AutifyMobileBuilder_CannotSpecifyBothBuildIdAndBuildPath());
             }
-            if (StringUtils.isBlank(value) && StringUtils.isBlank(buildId)) {
+            if (Util.fixEmptyAndTrim(value) == null && Util.fixEmptyAndTrim(buildId) == null) {
                 return FormValidation.error(Messages.AutifyMobileBuilder_SpecifyEitherBuildIdOrBuildPath());
             }
             return FormValidation.ok();
         }
 
         public FormValidation doCheckTimeout(@QueryParameter String value, @QueryParameter boolean wait) {
-            if (StringUtils.isNotBlank(value) && !wait) {
+            if (Util.fixEmptyAndTrim(value) != null && !wait) {
                 return FormValidation.warning(Messages.AutifyMobileBuilder_NoEffectWhenWaitIsUnchecked());
             }
             return FormValidation.ok();

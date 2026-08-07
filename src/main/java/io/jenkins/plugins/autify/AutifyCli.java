@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.SystemUtils;
 
 import hudson.FilePath;
 import hudson.Launcher;
@@ -17,6 +15,7 @@ import hudson.Launcher.ProcStarter;
 import hudson.model.TaskListener;
 import hudson.util.ArgumentListBuilder;
 import io.jenkins.plugins.autify.model.UrlReplacement;
+import hudson.Util;
 
 public class AutifyCli {
 
@@ -36,9 +35,9 @@ public class AutifyCli {
         this.workspace = workspace;
         this.launcher = launcher;
         this.logger = listener.getLogger();
-        this.autifyPath = StringUtils.isEmpty(autifyPath) ? "autify" : autifyPath;
-        this.shellInstallerUrl = StringUtils.isEmpty(shellInstallerUrl) ? INSTALL_SCRIPT_URL : shellInstallerUrl;
-        this.userAgentSuffix = StringUtils.trimToEmpty(userAgentSuffix);
+        this.autifyPath = Util.fixEmpty(autifyPath) == null ? "autify" : autifyPath;
+        this.shellInstallerUrl = Util.fixEmpty(shellInstallerUrl) == null ? INSTALL_SCRIPT_URL : shellInstallerUrl;
+        this.userAgentSuffix = Util.fixNull(userAgentSuffix).trim();
     }
 
     public int install() {
@@ -90,12 +89,12 @@ public class AutifyCli {
     public int mobileTestRun(String autifyUrl, String buildId, String buildPath, boolean wait, String timeout) {
         Builder builder = new Builder("mobile", "test", "run");
         builder.add(autifyUrl);
-        if (StringUtils.isNotBlank(buildId) && StringUtils.isNotBlank(buildPath)) {
+        if (Util.fixEmptyAndTrim(buildId) != null && Util.fixEmptyAndTrim(buildPath) != null) {
             logger.println("Cannot specify both buildId and buildPath.");
             return 1;
-        } else if (StringUtils.isNotBlank(buildId)) {
+        } else if (Util.fixEmptyAndTrim(buildId) != null) {
             builder.addFlag("--build-id", buildId);
-        } else if (StringUtils.isNotBlank(buildPath)) {
+        } else if (Util.fixEmptyAndTrim(buildPath) != null) {
             builder.addFlag("--build-path", buildPath);
         } else {
             logger.println("Either buildId or buildPath is required.");
@@ -175,7 +174,7 @@ public class AutifyCli {
     private int runBashScript(InputStream scriptStream, ArgumentListBuilder builder) {
         try {
             int ret;
-            if (SystemUtils.IS_OS_WINDOWS) {
+            if (System.getProperty("os.name").startsWith("Windows")) {
                 // GitHub Actions windows runner can't recognize `bash` for some reasons.
                 // This is a workaround to call `bash` by passing the command to `cmd.exe`.
                 String command = "bash -xe -s - " + builder.toString();
@@ -200,7 +199,7 @@ public class AutifyCli {
         }
 
         public Builder addFlag(String flag, String value) {
-            if (StringUtils.isNotBlank(value))
+            if (Util.fixEmptyAndTrim(value) != null)
                 add(flag, value);
             return this;
         }
