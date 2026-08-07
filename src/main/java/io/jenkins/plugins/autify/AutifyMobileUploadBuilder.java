@@ -33,9 +33,9 @@ import javax.annotation.CheckForNull;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 
-import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
+import hudson.Util;
 
 public class AutifyMobileUploadBuilder extends Builder implements SimpleBuildStep {
 
@@ -59,15 +59,15 @@ public class AutifyMobileUploadBuilder extends Builder implements SimpleBuildSte
     }
 
     public String getWorkspaceId() {
-        return StringUtils.trimToEmpty(workspaceId);
+        return Util.fixNull(workspaceId).trim();
     }
 
     public String getBuildPath() {
-        return StringUtils.trimToEmpty(buildPath);
+        return Util.fixNull(buildPath).trim();
     }
 
     public String getAutifyPath() {
-        return StringUtils.trimToEmpty(autifyPath);
+        return Util.fixNull(autifyPath).trim();
     }
 
     @DataBoundSetter
@@ -76,7 +76,7 @@ public class AutifyMobileUploadBuilder extends Builder implements SimpleBuildSte
     }
 
     public String getShellInstallerUrl() {
-        return StringUtils.trimToEmpty(shellInstallerUrl);
+        return Util.fixNull(shellInstallerUrl).trim();
     }
 
     @DataBoundSetter
@@ -142,7 +142,7 @@ public class AutifyMobileUploadBuilder extends Builder implements SimpleBuildSte
                     return FormValidation.ok();
                 }
             }
-            if (StringUtils.isBlank(value)) {
+            if (Util.fixEmptyAndTrim(value) == null) {
                 return FormValidation.error(Messages.AutifyMobileUploadBuilder_CannotBeEmpty());
             }
             if (CredentialsProvider.listCredentials(
@@ -158,14 +158,14 @@ public class AutifyMobileUploadBuilder extends Builder implements SimpleBuildSte
         }
 
         public FormValidation doCheckWorkspaceId(@QueryParameter String value) {
-            if (StringUtils.isBlank(value)) {
+            if (Util.fixEmptyAndTrim(value) == null) {
                 return FormValidation.error(Messages.AutifyMobileUploadBuilder_CannotBeEmpty());
             }
             return FormValidation.ok();
         }
 
         public FormValidation doCheckBuildPath(@QueryParameter String value) {
-            if (StringUtils.isBlank(value)) {
+            if (Util.fixEmptyAndTrim(value) == null) {
                 return FormValidation.error(Messages.AutifyMobileUploadBuilder_CannotBeEmpty());
             }
             return FormValidation.ok();

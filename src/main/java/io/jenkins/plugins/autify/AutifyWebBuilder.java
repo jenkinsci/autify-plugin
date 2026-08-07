@@ -35,10 +35,10 @@ import java.util.regex.Pattern;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 
-import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 import org.kohsuke.stapler.DataBoundSetter;
+import hudson.Util;
 
 public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
 
@@ -85,7 +85,7 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
     }
 
     public String getTimeout() {
-        return StringUtils.trimToEmpty(timeout);
+        return Util.fixNull(timeout).trim();
     }
 
     @DataBoundSetter
@@ -103,7 +103,7 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
     }
 
     public String getTestExecutionName() {
-        return StringUtils.trimToEmpty(testExecutionName);
+        return Util.fixNull(testExecutionName).trim();
     }
 
     @DataBoundSetter
@@ -112,7 +112,7 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
     }
 
     public String getBrowser() {
-        return StringUtils.trimToEmpty(browser);
+        return Util.fixNull(browser).trim();
     }
 
     @DataBoundSetter
@@ -121,7 +121,7 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
     }
 
     public String getDevice() {
-        return StringUtils.trimToEmpty(device);
+        return Util.fixNull(device).trim();
     }
 
     @DataBoundSetter
@@ -130,7 +130,7 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
     }
 
     public String getDeviceType() {
-        return StringUtils.trimToEmpty(deviceType);
+        return Util.fixNull(deviceType).trim();
     }
 
     @DataBoundSetter
@@ -139,7 +139,7 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
     }
 
     public String getOs() {
-        return StringUtils.trimToEmpty(os);
+        return Util.fixNull(os).trim();
     }
 
     @DataBoundSetter
@@ -148,7 +148,7 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
     }
 
     public String getOsVersion() {
-        return StringUtils.trimToEmpty(osVersion);
+        return Util.fixNull(osVersion).trim();
     }
 
     @DataBoundSetter
@@ -157,7 +157,7 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
     }
 
     public String getAutifyConnect() {
-        return StringUtils.trimToEmpty(autifyConnect);
+        return Util.fixNull(autifyConnect).trim();
     }
 
     @DataBoundSetter
@@ -175,7 +175,7 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
     }
 
     public String getAutifyConnectClientExtraArguments() {
-        return StringUtils.trimToEmpty(autifyConnectClientExtraArguments);
+        return Util.fixNull(autifyConnectClientExtraArguments).trim();
     }
 
     @DataBoundSetter
@@ -184,7 +184,7 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
     }
 
     public String getAutifyPath() {
-        return StringUtils.trimToEmpty(autifyPath);
+        return Util.fixNull(autifyPath).trim();
     }
 
     @DataBoundSetter
@@ -193,7 +193,7 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
     }
 
     public String getShellInstallerUrl() {
-        return StringUtils.trimToEmpty(shellInstallerUrl);
+        return Util.fixNull(shellInstallerUrl).trim();
     }
 
     @DataBoundSetter
@@ -266,7 +266,7 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
                     return FormValidation.ok();
                 }
             }
-            if (StringUtils.isBlank(value)) {
+            if (Util.fixEmptyAndTrim(value) == null) {
                 return FormValidation.error(Messages.AutifyWebBuilder_CannotBeEmpty());
             }
             if (CredentialsProvider.listCredentials(
@@ -281,7 +281,7 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
         }
 
         public FormValidation doCheckAutifyUrl(@QueryParameter String value) {
-            if (StringUtils.isBlank(value)) {
+            if (Util.fixEmptyAndTrim(value) == null) {
                 return FormValidation.error(Messages.AutifyWebBuilder_CannotBeEmpty());
             }
             if (!isTestScenarioUrl(value) && !isTestPlanUrl(value)) {
@@ -306,14 +306,14 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
         }
 
         public FormValidation doCheckTimeout(@QueryParameter String value, @QueryParameter boolean wait) {
-            if (StringUtils.isNotBlank(value) && !wait) {
+            if (Util.fixEmptyAndTrim(value) != null && !wait) {
                 return FormValidation.warning(Messages.AutifyWebBuilder_NoEffectWhenWaitIsUnchecked());
             }
             return FormValidation.ok();
         }
 
         private FormValidation checkEffectiveOnlyForTestScenarioUrl(String value, String autifyUrl) {
-            if (StringUtils.isNotBlank(value) && !isTestScenarioUrl(autifyUrl)) {
+            if (Util.fixEmptyAndTrim(value) != null && !isTestScenarioUrl(autifyUrl)) {
                 return FormValidation.warning(Messages.AutifyWebBuilder_EffectiveOnlyForTestScenarioUrl());
             }
             return FormValidation.ok(Messages.AutifyWebBuilder_EffectiveOnlyForTestScenarioUrl());
@@ -345,7 +345,7 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
 
         public FormValidation doCheckAutifyConnect(@QueryParameter String value,
                 @QueryParameter boolean autifyConnectClient) {
-            if (StringUtils.isNotEmpty(value) && autifyConnectClient)
+            if (Util.fixEmpty(value) != null && autifyConnectClient)
                 return FormValidation
                         .error(Messages
                                 .AutifyWebBuilder_CannotSpecifyBothAutifyConnectAccessPointAndAutifyConnectClient());
@@ -357,7 +357,7 @@ public class AutifyWebBuilder extends Builder implements SimpleBuildStep {
             if (value && !wait)
                 return FormValidation
                         .error(Messages.AutifyWebBuilder_WaitMustBeCheckedWhenAutifyConnectClientIsEnabled());
-            if (value && StringUtils.isNotEmpty(autifyConnect))
+            if (value && Util.fixEmpty(autifyConnect) != null)
                 return FormValidation
                         .error(Messages
                                 .AutifyWebBuilder_CannotSpecifyBothAutifyConnectAccessPointAndAutifyConnectClient());

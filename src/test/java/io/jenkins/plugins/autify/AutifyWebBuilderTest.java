@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Arrays;
 
-import org.apache.commons.lang.SystemUtils;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 import org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
@@ -55,7 +54,7 @@ public class AutifyWebBuilderTest {
             .add("--autify-connect-client-extra-arguments", stub)
             .toString() + "\n";
     // On Windows surrounded with single quotes
-    final String webTestRunFullCommand = SystemUtils.IS_OS_WINDOWS ? baseWebTestRunFullCommand.replaceAll("\"", "'") : baseWebTestRunFullCommand;
+    final String webTestRunFullCommand = System.getProperty("os.name").startsWith("Windows") ? baseWebTestRunFullCommand.replaceAll("\"", "'") : baseWebTestRunFullCommand;
 
     AutifyWebBuilder builder;
 
